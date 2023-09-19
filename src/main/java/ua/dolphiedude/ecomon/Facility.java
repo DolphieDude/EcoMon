@@ -7,6 +7,7 @@ public class Facility {
 
     @Id
     @GeneratedValue
+    @Column(name = "id_facility")
     private Long id;
 
     private String name;
