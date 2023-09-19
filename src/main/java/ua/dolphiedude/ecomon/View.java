@@ -1,48 +1,49 @@
 package ua.dolphiedude.ecomon;
 
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.ThemableLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
-import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.router.Route;
-import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 @Route("")
 public class View extends VerticalLayout {
-    private FacilityRepository facilityRepository;
     private TextField facilityName = new TextField("Name");
     private TextField activity = new TextField("Activity");
     private TextField ownership = new TextField("Ownership");
     private TextField ecologicalDescription = new TextField("Ecological Description");
     private Binder facilityBinder = new Binder<>(Facility.class);
 
-    private SubstanceRepository substanceRepository;
     private TextField substanceName = new TextField("Substance Name");
     private TextField gdk = new TextField("GDK");
     private TextField units = new TextField("Units");
     private Binder substanceBinder = new Binder<>(Substance.class);
 
+    private TextField idFacility = new TextField("ID of facility");
+    private TextField idSubstance = new TextField("ID of substance");
+    private TextField year = new TextField("Year");
+    private TextField amount = new TextField("Amount");
+    private Binder emissionBinder = new Binder<>(Emission.class);
 
-    public View(FacilityRepository repository, SubstanceRepository substanceRepository) {
+
+    public View(FacilityRepository facilityRepository, SubstanceRepository substanceRepository,
+                EmissionRepository emissionRepository) {
         facilityBinder.bind(facilityName, "name");
-        this.facilityRepository = repository;
         var facilityLayout = new HorizontalLayout();
         facilityLayout.add(facilityName, activity, ownership, ecologicalDescription);
         add(getForm(facilityLayout, facilityBinder, facilityRepository, Facility.class));
 
         substanceBinder.bind(substanceName, "name");
-        this.substanceRepository = substanceRepository;
         var substanceLayout = new HorizontalLayout();
         substanceLayout.add(substanceName, gdk, units);
         add(getForm(substanceLayout, substanceBinder, substanceRepository, Substance.class));
 
-
+        var emissionLayout = new HorizontalLayout();
+        emissionLayout.add(idFacility, idSubstance, year, amount);
+        add(getForm(emissionLayout, emissionBinder, emissionRepository, Emission.class));
     }
 
 //    private Component getFacilityForm() {

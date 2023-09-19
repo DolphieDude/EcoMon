@@ -14,9 +14,9 @@ public class Substance {
     private Long id;
 
     private String name;
-    private double gdk;
     private String units;
 
+    private double gdk;
 
 
     public Long getId() {
