@@ -8,6 +8,12 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.router.Route;
 import org.springframework.data.jpa.repository.JpaRepository;
+import ua.dolphiedude.ecomon.emission.Emission;
+import ua.dolphiedude.ecomon.emission.EmissionRepository;
+import ua.dolphiedude.ecomon.facility.Facility;
+import ua.dolphiedude.ecomon.facility.FacilityRepository;
+import ua.dolphiedude.ecomon.substance.Substance;
+import ua.dolphiedude.ecomon.substance.SubstanceRepository;
 
 @Route("")
 public class View extends VerticalLayout {
@@ -45,48 +51,6 @@ public class View extends VerticalLayout {
         emissionLayout.add(idFacility, idSubstance, year, amount);
         add(getForm(emissionLayout, emissionBinder, emissionRepository, Emission.class));
     }
-
-//    private Component getFacilityForm() {
-//        var layout = new HorizontalLayout();
-//        layout.setAlignItems(Alignment.BASELINE);
-//        Button addButton = new Button("Add");
-//        addButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-//        layout.add(facilityName, activity, ownership, ecologicalDescription, addButton);
-//        facilityBinder.bindInstanceFields(this);
-//
-//        addButton.addClickListener(add -> {
-//            try {
-//                Facility facility = new Facility();
-//                facilityBinder.writeBean(facility);
-//                facilityRepository.save(facility);
-//                facilityBinder.readBean(new Facility());
-//            } catch (ValidationException e) {
-//                throw new RuntimeException(e);
-//            }
-//        });
-//        return layout;
-//    }
-//
-//    private Component getSubstanceForm() {
-//        var layout = new HorizontalLayout();
-//        layout.setAlignItems(Alignment.BASELINE);
-//        Button addButton = new Button("Add");
-//        addButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-//        layout.add(substanceName, gdk, units, addButton);
-//        substanceBinder.bindInstanceFields(this);
-//
-//        addButton.addClickListener(add -> {
-//            try {
-//                Substance substance = new Substance();
-//                substanceBinder.writeBean(substance);
-//                substanceRepository.save(substance);
-//                substanceBinder.readBean(new Substance());
-//            } catch (ValidationException e) {
-//                throw new RuntimeException(e);
-//            }
-//        });
-//        return layout;
-//    }
 
     private HorizontalLayout getForm(HorizontalLayout layout, Binder binder, JpaRepository repository, Class beanType) {
         binder.bindInstanceFields(this);

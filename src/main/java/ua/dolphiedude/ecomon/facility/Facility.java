@@ -1,10 +1,9 @@
-package ua.dolphiedude.ecomon;
+package ua.dolphiedude.ecomon.facility;
 
 import jakarta.persistence.*;
 
 @Entity
 public class Facility {
-
     @Id
     @GeneratedValue
     @Column(name = "id_facility")

@@ -1,4 +1,4 @@
-package ua.dolphiedude.ecomon;
+package ua.dolphiedude.ecomon.substance;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

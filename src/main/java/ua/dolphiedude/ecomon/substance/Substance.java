@@ -1,4 +1,4 @@
-package ua.dolphiedude.ecomon;
+package ua.dolphiedude.ecomon.substance;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -7,7 +7,6 @@ import jakarta.persistence.Id;
 
 @Entity
 public class Substance {
-
     @Id
     @GeneratedValue
     @Column(name = "id_substance")
