@@ -16,9 +16,9 @@ public class Emission {
     private Long idFacility;
     private Long idSubstance;
 
-    private int year;
+    private Integer year;
 
-    private double amount;
+    private Double amount;
 
     public Long getId() {
         return id;
@@ -44,19 +44,19 @@ public class Emission {
         this.idSubstance = idSubstance;
     }
 
-    public int getYear() {
+    public Integer getYear() {
         return year;
     }
 
-    public void setYear(int year) {
+    public void setYear(Integer year) {
         this.year = year;
     }
 
-    public double getAmount() {
+    public Double getAmount() {
         return amount;
     }
 
-    public void setAmount(double amount) {
+    public void setAmount(Double amount) {
         this.amount = amount;
     }
 }

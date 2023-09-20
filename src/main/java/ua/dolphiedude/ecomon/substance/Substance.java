@@ -15,7 +15,7 @@ public class Substance {
     private String name;
     private String units;
 
-    private double gdk;
+    private Double gdk;
 
 
     public Long getId() {
@@ -42,11 +42,11 @@ public class Substance {
         this.units = units;
     }
 
-    public double getGdk() {
+    public Double getGdk() {
         return gdk;
     }
 
-    public void setGdk(double gdk) {
+    public void setGdk(Double gdk) {
         this.gdk = gdk;
     }
 }

@@ -1,6 +1,9 @@
 package ua.dolphiedude.ecomon.facility;
 
 import jakarta.persistence.*;
+import org.springframework.data.jpa.repository.Query;
+
+import java.util.List;
 
 @Entity
 public class Facility {
@@ -13,6 +16,8 @@ public class Facility {
     private String activity;
     private String ownership;
     private String ecologicalDescription;
+
+
 
     public Long getId() {
         return id;

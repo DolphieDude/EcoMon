@@ -2,6 +2,8 @@ package ua.dolphiedude.ecomon;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -16,34 +18,43 @@ import ua.dolphiedude.ecomon.facility.FacilityRepository;
 import ua.dolphiedude.ecomon.substance.Substance;
 import ua.dolphiedude.ecomon.substance.SubstanceRepository;
 
+
 @Route("")
 public class View extends VerticalLayout {
-    private TextField facilityName = new TextField("Facility Name");
     private TextField activity = new TextField("Activity");
     private TextField ownership = new TextField("Ownership");
     private TextField ecologicalDescription = new TextField("Ecological Description");
-    private Binder facilityBinder = new Binder<>(Facility.class);
+    private Binder<Facility> facilityBinder = new Binder<>(Facility.class);
+    private Grid<Facility> facilityGrid = new Grid<>(Facility.class);
+
 
     private TextField substanceName = new TextField("Substance Name");
     private TextField gdk = new TextField("GDK");
     private TextField units = new TextField("Units");
-    private Binder substanceBinder = new Binder<>(Substance.class);
+    private Binder<Substance> substanceBinder = new Binder<>(Substance.class);
+    private Grid<Substance> substanceGrid = new Grid<>(Substance.class);
 
-    private TextField idFacility = new TextField("ID of facility");
-    private TextField idSubstance = new TextField("ID of substance");
+    private ComboBox<Long> idFacility = new ComboBox<>("ID of facility");
+    private ComboBox<Long> idSubstance = new ComboBox<>("ID of substance");
     private TextField year = new TextField("Year");
     private TextField amount = new TextField("Amount");
-    private Binder emissionBinder = new Binder<>(Emission.class);
+    private Binder<Emission> emissionBinder = new Binder<>(Emission.class);
+    private Grid<Emission> emissionGrid = new Grid<>(Emission.class);
 
 
     public View(FacilityRepository facilityRepository, SubstanceRepository substanceRepository,
                 EmissionRepository emissionRepository) {
+
         add(new H3("Facility"));
+        TextField facilityName = new TextField("Facility Name");
         facilityBinder.bind(facilityName, "name");
         var facilityLayout = new HorizontalLayout();
         facilityLayout.add(facilityName, activity, ownership, ecologicalDescription);
         add(getForm(facilityLayout, facilityBinder, facilityRepository, Facility.class));
-        add(new H3("\n"));
+
+        facilityGrid.setColumns("id", "name", "activity", "ownership", "ecologicalDescription");
+        facilityGrid.setItems(facilityRepository.findAll());
+        add(facilityGrid);
         add(new H3("\n"));
 
         add(new H3("Substance"));
@@ -51,13 +62,29 @@ public class View extends VerticalLayout {
         var substanceLayout = new HorizontalLayout();
         substanceLayout.add(substanceName, gdk, units);
         add(getForm(substanceLayout, substanceBinder, substanceRepository, Substance.class));
-        add(new H3("\n"));
+
+        substanceGrid.setColumns("id", "name", "gdk", "units");
+        substanceGrid.setItems(substanceRepository.findAll());
+        add(substanceGrid);
         add(new H3("\n"));
 
+
         add(new H3("Emission"));
+        idFacility.setAllowCustomValue(true);
+        idFacility.setItems(emissionRepository.getFacilityIds());
+
+
+
+        idSubstance.setAllowCustomValue(true);
+        idSubstance.setItems(emissionRepository.getSubstanceIds());
+
         var emissionLayout = new HorizontalLayout();
         emissionLayout.add(idFacility, idSubstance, year, amount);
         add(getForm(emissionLayout, emissionBinder, emissionRepository, Emission.class));
+
+        emissionGrid.setColumns("id", "idFacility", "idSubstance", "year", "amount");
+        emissionGrid.setItems(emissionRepository.findAll());
+        add(emissionGrid);
     }
 
     private HorizontalLayout getForm(HorizontalLayout layout, Binder binder, JpaRepository repository, Class beanType) {
