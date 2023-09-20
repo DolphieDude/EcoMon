@@ -2,6 +2,7 @@ package ua.dolphiedude.ecomon;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -17,7 +18,7 @@ import ua.dolphiedude.ecomon.substance.SubstanceRepository;
 
 @Route("")
 public class View extends VerticalLayout {
-    private TextField facilityName = new TextField("Name");
+    private TextField facilityName = new TextField("Facility Name");
     private TextField activity = new TextField("Activity");
     private TextField ownership = new TextField("Ownership");
     private TextField ecologicalDescription = new TextField("Ecological Description");
@@ -37,16 +38,23 @@ public class View extends VerticalLayout {
 
     public View(FacilityRepository facilityRepository, SubstanceRepository substanceRepository,
                 EmissionRepository emissionRepository) {
+        add(new H3("Facility"));
         facilityBinder.bind(facilityName, "name");
         var facilityLayout = new HorizontalLayout();
         facilityLayout.add(facilityName, activity, ownership, ecologicalDescription);
         add(getForm(facilityLayout, facilityBinder, facilityRepository, Facility.class));
+        add(new H3("\n"));
+        add(new H3("\n"));
 
+        add(new H3("Substance"));
         substanceBinder.bind(substanceName, "name");
         var substanceLayout = new HorizontalLayout();
         substanceLayout.add(substanceName, gdk, units);
         add(getForm(substanceLayout, substanceBinder, substanceRepository, Substance.class));
+        add(new H3("\n"));
+        add(new H3("\n"));
 
+        add(new H3("Emission"));
         var emissionLayout = new HorizontalLayout();
         emissionLayout.add(idFacility, idSubstance, year, amount);
         add(getForm(emissionLayout, emissionBinder, emissionRepository, Emission.class));
