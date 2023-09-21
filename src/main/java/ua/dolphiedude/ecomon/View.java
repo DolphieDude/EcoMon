@@ -18,6 +18,8 @@ import ua.dolphiedude.ecomon.facility.FacilityRepository;
 import ua.dolphiedude.ecomon.substance.Substance;
 import ua.dolphiedude.ecomon.substance.SubstanceRepository;
 
+import java.util.List;
+
 
 @Route("")
 public class View extends VerticalLayout {
@@ -71,12 +73,27 @@ public class View extends VerticalLayout {
 
         add(new H3("Emission"));
         idFacility.setAllowCustomValue(true);
-        idFacility.setItems(emissionRepository.getFacilityIds());
+        idFacility.setItems(facilityRepository.getIds());
+        idFacility.setItemLabelGenerator(id -> {
+            List<Facility> list = facilityRepository.findAll();
+            for (Facility facility: list) {
+                if (facility.getId().equals(id)) return facility.getName();
+            }
+            return null;
+        });
+
 
 
 
         idSubstance.setAllowCustomValue(true);
-        idSubstance.setItems(emissionRepository.getSubstanceIds());
+        idSubstance.setItems(substanceRepository.getIds());
+        idSubstance.setItemLabelGenerator(id -> {
+            List<Substance> list = substanceRepository.findAll();
+            for (Substance substance: list) {
+                if (substance.getId().equals(id)) return substance.getName();
+            }
+            return null;
+        });
 
         var emissionLayout = new HorizontalLayout();
         emissionLayout.add(idFacility, idSubstance, year, amount);
