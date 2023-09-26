@@ -9,15 +9,19 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.router.Route;
 import org.springframework.data.jpa.repository.JpaRepository;
 import ua.dolphiedude.ecomon.emission.Emission;
 import ua.dolphiedude.ecomon.emission.EmissionRepository;
+import ua.dolphiedude.ecomon.emission.EmissionWithNames;
 import ua.dolphiedude.ecomon.facility.Facility;
 import ua.dolphiedude.ecomon.facility.FacilityRepository;
 import ua.dolphiedude.ecomon.substance.Substance;
 import ua.dolphiedude.ecomon.substance.SubstanceRepository;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 
@@ -41,7 +45,7 @@ public class View extends VerticalLayout {
     private TextField year = new TextField("Year");
     private TextField amount = new TextField("Amount");
     private Binder<Emission> emissionBinder = new Binder<>(Emission.class);
-    private Grid<Emission> emissionGrid = new Grid<>(Emission.class);
+    private Grid<EmissionWithNames> emissionGrid = new Grid<>(EmissionWithNames.class);
 
 
     public View(FacilityRepository facilityRepository, SubstanceRepository substanceRepository,
@@ -99,8 +103,14 @@ public class View extends VerticalLayout {
         emissionLayout.add(idFacility, idSubstance, year, amount);
         add(getForm(emissionLayout, emissionBinder, emissionRepository, Emission.class));
 
-        emissionGrid.setColumns("id", "idFacility", "idSubstance", "year", "amount");
-        emissionGrid.setItems(emissionRepository.findAll());
+        emissionGrid.setColumns("id", "facility", "substance", "year", "amount");
+        List<Emission> emissions = emissionRepository.findAll();
+        Collection<EmissionWithNames> emissionsForGrid = new ArrayList<>();
+        for (Emission emission: emissions) {
+            emissionsForGrid.add(new EmissionWithNames(facilityRepository, substanceRepository, emission));
+        }
+
+        emissionGrid.setItems(emissionsForGrid);
         add(emissionGrid);
     }
 

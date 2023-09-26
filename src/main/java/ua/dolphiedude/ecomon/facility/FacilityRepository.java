@@ -8,4 +8,5 @@ import java.util.Collection;
 public interface FacilityRepository extends JpaRepository<Facility, Long> {
     @Query("select id from Facility ")
     Collection<Long> getIds();
+
 }
