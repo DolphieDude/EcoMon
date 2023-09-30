@@ -1,9 +1,8 @@
 package ua.dolphiedude.ecomon.emission;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import ua.dolphiedude.ecomon.facility.Facility;
+import ua.dolphiedude.ecomon.substance.Substance;
 
 @Entity
 public class Emission {
@@ -13,8 +12,12 @@ public class Emission {
     @Column(name = "id_emission")
     private Long id;
 
-    private Long idFacility;
-    private Long idSubstance;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_facility")
+    private Facility facility;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_substance")
+    private Substance substance;
 
     private Integer year;
 
@@ -28,21 +31,22 @@ public class Emission {
         this.id = id;
     }
 
-    public Long getIdFacility() {
-        return idFacility;
+    public Facility getFacility() {
+        return facility;
     }
 
-    public void setIdFacility(Long idFacility) {
-        this.idFacility = idFacility;
+    public void setFacility(Facility facility) {
+        this.facility = facility;
     }
 
-    public Long getIdSubstance() {
-        return idSubstance;
+    public Substance getSubstance() {
+        return substance;
     }
 
-    public void setIdSubstance(Long idSubstance) {
-        this.idSubstance = idSubstance;
+    public void setSubstance(Substance substance) {
+        this.substance = substance;
     }
+
 
     public Integer getYear() {
         return year;

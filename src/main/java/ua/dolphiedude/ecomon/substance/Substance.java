@@ -17,6 +17,10 @@ public class Substance {
 
     private Double gdk;
 
+    @Override
+    public String toString() {
+        return name;
+    }
 
     public Long getId() {
         return id;
