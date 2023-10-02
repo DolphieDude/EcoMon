@@ -1,9 +1,8 @@
 package ua.dolphiedude.ecomon.facility;
 
 import jakarta.persistence.*;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.context.annotation.Bean;
 
-import java.util.List;
 
 @Entity
 public class Facility {

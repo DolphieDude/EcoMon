@@ -23,32 +23,33 @@ import java.util.List;
 
 @Route("")
 public class View extends VerticalLayout {
-    private TextField activity = new TextField("Activity");
-    private TextField ownership = new TextField("Ownership");
-    private TextField ecologicalDescription = new TextField("Ecological Description");
-    private Binder<Facility> facilityBinder = new Binder<>(Facility.class);
-    private Grid<Facility> facilityGrid = new Grid<>(Facility.class);
+
+    private final TextField facilityName = new TextField("Facility Name");
+    private final TextField activity = new TextField("Activity");
+    private final TextField ownership = new TextField("Ownership");
+    private final TextField ecologicalDescription = new TextField("Ecological Description");
+    private final Binder<Facility> facilityBinder = new Binder<>(Facility.class);
+    private final Grid<Facility> facilityGrid = new Grid<>(Facility.class);
 
 
-    private TextField substanceName = new TextField("Substance Name");
-    private TextField gdk = new TextField("GDK");
-    private TextField units = new TextField("Units");
-    private Binder<Substance> substanceBinder = new Binder<>(Substance.class);
-    private Grid<Substance> substanceGrid = new Grid<>(Substance.class);
+    private final TextField substanceName = new TextField("Substance Name");
+    private final TextField gdk = new TextField("GDK");
+    private final TextField units = new TextField("Units");
+    private final Binder<Substance> substanceBinder = new Binder<>(Substance.class);
+    private final Grid<Substance> substanceGrid = new Grid<>(Substance.class);
 
-    private ComboBox<Long> idFacility = new ComboBox<>("ID of facility");
-    private ComboBox<Long> idSubstance = new ComboBox<>("ID of substance");
-    private TextField year = new TextField("Year");
-    private TextField amount = new TextField("Amount");
-    private Binder<Emission> emissionBinder = new Binder<>(Emission.class);
-    private Grid<Emission> emissionGrid = new Grid<>(Emission.class);
+    private final ComboBox<Long> idFacility = new ComboBox<>("ID of facility");
+    private final ComboBox<Long> idSubstance = new ComboBox<>("ID of substance");
+    private final TextField year = new TextField("Year");
+    private final TextField amount = new TextField("Amount");
+    private final Binder<Emission> emissionBinder = new Binder<>(Emission.class);
+    private final Grid<Emission> emissionGrid = new Grid<>(Emission.class);
 
 
     public View(FacilityRepository facilityRepository, SubstanceRepository substanceRepository,
                 EmissionRepository emissionRepository) {
 
         add(new H3("Facility"));
-        TextField facilityName = new TextField("Facility Name");
         facilityBinder.bind(facilityName, "name");
         var facilityLayout = new HorizontalLayout();
         facilityLayout.add(facilityName, activity, ownership, ecologicalDescription);
