@@ -105,7 +105,7 @@ public class View extends VerticalLayout {
         add(emissionGrid);
     }
 
-    private HorizontalLayout getForm(HorizontalLayout layout, Binder binder, JpaRepository repository, Class beanType) {
+    private <ENTITY, T extends JpaRepository<ENTITY, Long>> HorizontalLayout getForm(HorizontalLayout layout, Binder<ENTITY> binder, T repository, Class<ENTITY> beanType) {
         binder.bindInstanceFields(this);
 
         layout.setAlignItems(Alignment.BASELINE);
@@ -114,7 +114,7 @@ public class View extends VerticalLayout {
         layout.add(addButton);
         addButton.addClickListener(add  -> {
             try {
-                Object bean = beanType.getDeclaredConstructor().newInstance();
+                ENTITY bean = beanType.getDeclaredConstructor().newInstance();
                 binder.writeBean(bean);
                 repository.save(bean);
                 binder.readBean(beanType.getDeclaredConstructor().newInstance());

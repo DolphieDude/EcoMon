@@ -19,6 +19,12 @@ public class Emission {
     @JoinColumn(name = "id_substance")
     private Substance substance;
 
+
+    @Column(name = "id_facility")
+    private Long idFacility;
+    @Column(name = "id_substance")
+    private Long idSubstance;
+
     private Integer year;
 
     private Double amount;
@@ -45,6 +51,22 @@ public class Emission {
 
     public void setSubstance(Substance substance) {
         this.substance = substance;
+    }
+
+    public Long getIdFacility() {
+        return idFacility;
+    }
+
+    public void setIdFacility(Long idFacility) {
+        this.idFacility = idFacility;
+    }
+
+    public Long getIdSubstance() {
+        return idSubstance;
+    }
+
+    public void setIdSubstance(Long idSubstance) {
+        this.idSubstance = idSubstance;
     }
 
 
