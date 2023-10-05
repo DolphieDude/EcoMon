@@ -1,7 +1,6 @@
 package ua.dolphiedude.ecomon.facility;
 
 import jakarta.persistence.*;
-import org.springframework.context.annotation.Bean;
 
 
 @Entity

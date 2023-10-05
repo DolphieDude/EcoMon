@@ -38,8 +38,8 @@ public class View extends VerticalLayout {
     private final Binder<Substance> substanceBinder = new Binder<>(Substance.class);
     private final Grid<Substance> substanceGrid = new Grid<>(Substance.class);
 
-    private final ComboBox<Long> idFacility = new ComboBox<>("ID of facility");
-    private final ComboBox<Long> idSubstance = new ComboBox<>("ID of substance");
+    private final ComboBox<Facility> facility = new ComboBox<>("ID of facility");
+    private final ComboBox<Substance> substance = new ComboBox<>("ID of substance");
     private final TextField year = new TextField("Year");
     private final TextField amount = new TextField("Amount");
     private final Binder<Emission> emissionBinder = new Binder<>(Emission.class);
@@ -73,31 +73,24 @@ public class View extends VerticalLayout {
 
 
         add(new H3("Emission"));
-        idFacility.setAllowCustomValue(true);
-        idFacility.setItems(facilityRepository.getIds());
-        idFacility.setItemLabelGenerator(id -> {
-            List<Facility> list = facilityRepository.findAll();
-            for (Facility facility: list) {
-                if (facility.getId().equals(id)) return facility.getName();
-            }
-            return null;
-        });
+        facility.setItems(facilityRepository.findAll());
+
+//        Good decision for cases when need to show in combobox something different from actual items in it:
+//
+//        idFacility.setItemLabelGenerator(id -> {
+//            List<Facility> list = facilityRepository.findAll();
+//            for (Facility facility: list) {
+//                if (facility.getId().equals(id)) return facility.getName();
+//            }
+//            return null;
+//        });
 
 
 
-
-        idSubstance.setAllowCustomValue(true);
-        idSubstance.setItems(substanceRepository.getIds());
-        idSubstance.setItemLabelGenerator(id -> {
-            List<Substance> list = substanceRepository.findAll();
-            for (Substance substance: list) {
-                if (substance.getId().equals(id)) return substance.getName();
-            }
-            return null;
-        });
+        substance.setItems(substanceRepository.findAll());
 
         var emissionLayout = new HorizontalLayout();
-        emissionLayout.add(idFacility, idSubstance, year, amount);
+        emissionLayout.add(facility, substance, year, amount);
         add(getForm(emissionLayout, emissionBinder, emissionRepository, Emission.class));
 
         emissionGrid.setColumns("id", "facility", "substance", "year", "amount");

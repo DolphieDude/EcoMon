@@ -12,18 +12,14 @@ public class Emission {
     @Column(name = "id_emission")
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
+
+    @ManyToOne
     @JoinColumn(name = "id_facility")
     private Facility facility;
-    @OneToOne(fetch = FetchType.LAZY)
+
+    @ManyToOne
     @JoinColumn(name = "id_substance")
     private Substance substance;
-
-
-    @Column(name = "id_facility")
-    private Long idFacility;
-    @Column(name = "id_substance")
-    private Long idSubstance;
 
     private Integer year;
 
@@ -52,23 +48,6 @@ public class Emission {
     public void setSubstance(Substance substance) {
         this.substance = substance;
     }
-
-    public Long getIdFacility() {
-        return idFacility;
-    }
-
-    public void setIdFacility(Long idFacility) {
-        this.idFacility = idFacility;
-    }
-
-    public Long getIdSubstance() {
-        return idSubstance;
-    }
-
-    public void setIdSubstance(Long idSubstance) {
-        this.idSubstance = idSubstance;
-    }
-
 
     public Integer getYear() {
         return year;
