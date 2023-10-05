@@ -18,8 +18,6 @@ import ua.dolphiedude.ecomon.facility.FacilityRepository;
 import ua.dolphiedude.ecomon.substance.Substance;
 import ua.dolphiedude.ecomon.substance.SubstanceRepository;
 
-import java.util.List;
-
 
 @Route("")
 public class View extends VerticalLayout {

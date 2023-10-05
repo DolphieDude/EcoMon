@@ -1,11 +1,12 @@
 package ua.dolphiedude.ecomon.emission;
 
 import jakarta.persistence.*;
+import lombok.Data;
 import ua.dolphiedude.ecomon.facility.Facility;
 import ua.dolphiedude.ecomon.substance.Substance;
 
 @Entity
-public class Emission {
+@Data public class Emission {
 
     @Id
     @GeneratedValue
@@ -25,43 +26,4 @@ public class Emission {
 
     private Double amount;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Facility getFacility() {
-        return facility;
-    }
-
-    public void setFacility(Facility facility) {
-        this.facility = facility;
-    }
-
-    public Substance getSubstance() {
-        return substance;
-    }
-
-    public void setSubstance(Substance substance) {
-        this.substance = substance;
-    }
-
-    public Integer getYear() {
-        return year;
-    }
-
-    public void setYear(Integer year) {
-        this.year = year;
-    }
-
-    public Double getAmount() {
-        return amount;
-    }
-
-    public void setAmount(Double amount) {
-        this.amount = amount;
-    }
 }
