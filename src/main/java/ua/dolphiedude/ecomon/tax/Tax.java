@@ -16,7 +16,7 @@ public class Tax {
 
     @OneToOne
     @JoinColumn(name = "id_substance")
-    private Substance substance;
+    private Substance taxSubstance;
 
     private Double rate;
 }

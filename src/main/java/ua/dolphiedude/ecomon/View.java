@@ -17,6 +17,8 @@ import ua.dolphiedude.ecomon.facility.Facility;
 import ua.dolphiedude.ecomon.facility.FacilityRepository;
 import ua.dolphiedude.ecomon.substance.Substance;
 import ua.dolphiedude.ecomon.substance.SubstanceRepository;
+import ua.dolphiedude.ecomon.tax.Tax;
+import ua.dolphiedude.ecomon.tax.TaxRepository;
 
 
 @Route("")
@@ -36,16 +38,21 @@ public class View extends VerticalLayout {
     private final Binder<Substance> substanceBinder = new Binder<>(Substance.class);
     private final Grid<Substance> substanceGrid = new Grid<>(Substance.class);
 
-    private final ComboBox<Facility> facility = new ComboBox<>("ID of facility");
-    private final ComboBox<Substance> substance = new ComboBox<>("ID of substance");
+    private final ComboBox<Facility> emissionFacility = new ComboBox<>("ID of facility");
+    private final ComboBox<Substance> emissionSubstance = new ComboBox<>("ID of substance");
     private final TextField year = new TextField("Year");
     private final TextField amount = new TextField("Amount");
     private final Binder<Emission> emissionBinder = new Binder<>(Emission.class);
     private final Grid<Emission> emissionGrid = new Grid<>(Emission.class);
 
+    private final ComboBox<Substance> taxSubstance = new ComboBox<>("ID of substance");
+    private final TextField rate = new TextField("Tax rate");
+    private final Binder<Tax> taxBinder = new Binder<>(Tax.class);
+    private final Grid<Tax> taxGrid = new Grid<>(Tax.class);
+
 
     public View(FacilityRepository facilityRepository, SubstanceRepository substanceRepository,
-                EmissionRepository emissionRepository) {
+                EmissionRepository emissionRepository, TaxRepository taxRepository) {
 
         add(new H3("Facility"));
         facilityBinder.bind(facilityName, "name");
@@ -71,7 +78,7 @@ public class View extends VerticalLayout {
 
 
         add(new H3("Emission"));
-        facility.setItems(facilityRepository.findAll());
+        emissionFacility.setItems(facilityRepository.findAll());
 
 //        Good decision for cases when need to show in combobox something different from actual items in it:
 //
@@ -85,15 +92,27 @@ public class View extends VerticalLayout {
 
 
 
-        substance.setItems(substanceRepository.findAll());
+        emissionSubstance.setItems(substanceRepository.findAll());
 
         var emissionLayout = new HorizontalLayout();
-        emissionLayout.add(facility, substance, year, amount);
+        emissionLayout.add(emissionFacility, emissionSubstance, year, amount);
         add(getForm(emissionLayout, emissionBinder, emissionRepository, Emission.class));
 
-        emissionGrid.setColumns("id", "facility", "substance", "year", "amount");
+        emissionGrid.setColumns("id", "emissionFacility", "emissionSubstance", "year", "amount");
         emissionGrid.setItems(emissionRepository.findAll());
         add(emissionGrid);
+        add(new H3("\n"));
+
+        add(new H3("Tax"));
+        taxSubstance.setItems(substanceRepository.findAll());
+
+        var taxLayout = new HorizontalLayout();
+        taxLayout.add(taxSubstance, rate);
+        add(getForm(taxLayout, taxBinder, taxRepository, Tax.class));
+
+        taxGrid.setColumns("id", "taxSubstance", "rate");
+        taxGrid.setItems(taxRepository.findAll());
+        add(taxGrid);
     }
 
     private <ENTITY, T extends JpaRepository<ENTITY, Long>> HorizontalLayout getForm(HorizontalLayout layout, Binder<ENTITY> binder, T repository, Class<ENTITY> beanType) {

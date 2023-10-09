@@ -16,11 +16,11 @@ import ua.dolphiedude.ecomon.substance.Substance;
 
     @ManyToOne
     @JoinColumn(name = "id_facility")
-    private Facility facility;
+    private Facility emissionFacility;
 
     @ManyToOne
     @JoinColumn(name = "id_substance")
-    private Substance substance;
+    private Substance emissionSubstance;
 
     private Integer year;
 
