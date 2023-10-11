@@ -6,6 +6,8 @@ import lombok.Setter;
 import org.hibernate.annotations.Formula;
 import ua.dolphiedude.ecomon.emission.Emission;
 
+import java.math.BigDecimal;
+
 @Entity
 @Getter
 @Setter
@@ -19,5 +21,5 @@ public class Result {
     @JoinColumn(name = "id_emission")
     private Emission resultEmission;
 
-    private Double taxesValue;
+    private BigDecimal taxesValue;
 }

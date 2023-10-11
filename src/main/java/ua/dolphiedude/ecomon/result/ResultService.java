@@ -6,6 +6,7 @@ import ua.dolphiedude.ecomon.emission.EmissionRepository;
 import ua.dolphiedude.ecomon.tax.TaxRepository;
 import ua.dolphiedude.ecomon.emission.Emission;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
 
@@ -28,12 +29,12 @@ public class ResultService {
 
         for (Emission emission: emissionCollection) {
             Result result = new Result();
-            Double rate = taxRepository.findByTaxSubstance(emission.getEmissionSubstance()).getRate();
-            Double amount = emission.getAmount();
+            BigDecimal rate = taxRepository.findByTaxSubstance(emission.getEmissionSubstance()).getRate();
+            BigDecimal amount = emission.getAmount();
 
             result.setResultEmission(emission);
 
-            Double taxesValue = amount * rate;
+            BigDecimal taxesValue = amount.multiply(rate);
             result.setTaxesValue(taxesValue);
 
             resultRepository.save(result);

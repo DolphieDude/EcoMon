@@ -5,6 +5,8 @@ import lombok.Data;
 import ua.dolphiedude.ecomon.facility.Facility;
 import ua.dolphiedude.ecomon.substance.Substance;
 
+import java.math.BigDecimal;
+
 @Entity
 @Data public class Emission {
 
@@ -24,6 +26,6 @@ import ua.dolphiedude.ecomon.substance.Substance;
 
     private Integer year;
 
-    private Double amount;
+    private BigDecimal amount;
 
 }
