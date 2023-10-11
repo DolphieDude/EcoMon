@@ -3,6 +3,7 @@ package ua.dolphiedude.ecomon.result;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Formula;
 import ua.dolphiedude.ecomon.emission.Emission;
 
 @Entity
@@ -16,7 +17,7 @@ public class Result {
 
     @OneToOne
     @JoinColumn(name = "id_emission")
-    private Emission emission;
+    private Emission resultEmission;
 
-    private Double taxes_to_pay;
+    private Double taxesValue;
 }

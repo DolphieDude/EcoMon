@@ -10,11 +10,15 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.router.Route;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import ua.dolphiedude.ecomon.emission.Emission;
 import ua.dolphiedude.ecomon.emission.EmissionRepository;
 import ua.dolphiedude.ecomon.facility.Facility;
 import ua.dolphiedude.ecomon.facility.FacilityRepository;
+import ua.dolphiedude.ecomon.result.Result;
+import ua.dolphiedude.ecomon.result.ResultRepository;
+import ua.dolphiedude.ecomon.result.ResultService;
 import ua.dolphiedude.ecomon.substance.Substance;
 import ua.dolphiedude.ecomon.substance.SubstanceRepository;
 import ua.dolphiedude.ecomon.tax.Tax;
@@ -50,9 +54,12 @@ public class View extends VerticalLayout {
     private final Binder<Tax> taxBinder = new Binder<>(Tax.class);
     private final Grid<Tax> taxGrid = new Grid<>(Tax.class);
 
+    private final Grid<Result> resultGrid = new Grid<>(Result.class);
+
 
     public View(FacilityRepository facilityRepository, SubstanceRepository substanceRepository,
-                EmissionRepository emissionRepository, TaxRepository taxRepository) {
+                EmissionRepository emissionRepository, TaxRepository taxRepository,
+                ResultRepository resultRepository, ResultService resultService) {
 
         add(new H3("Facility"));
         facilityBinder.bind(facilityName, "name");
@@ -113,6 +120,23 @@ public class View extends VerticalLayout {
         taxGrid.setColumns("id", "taxSubstance", "rate");
         taxGrid.setItems(taxRepository.findAll());
         add(taxGrid);
+        add(new H3("\n"));
+
+        add(new H3("Result"));
+        var resultLayout = new HorizontalLayout();
+        Button calculateResultsButton = new Button("Calculate Results");
+        calculateResultsButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        resultLayout.add(calculateResultsButton);
+
+        calculateResultsButton.addClickListener(calculateResults -> {
+            resultService.calculateAndCreateResults();
+        });
+
+        add(resultLayout);
+
+        resultGrid.setColumns("id", "resultEmission.emissionFacility", "resultEmission.emissionSubstance", "taxesValue");
+        resultGrid.setItems(resultRepository.findAll());
+        add(resultGrid);
     }
 
     private <ENTITY, T extends JpaRepository<ENTITY, Long>> HorizontalLayout getForm(HorizontalLayout layout, Binder<ENTITY> binder, T repository, Class<ENTITY> beanType) {
