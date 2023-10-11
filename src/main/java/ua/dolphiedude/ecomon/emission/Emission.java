@@ -1,20 +1,22 @@
 package ua.dolphiedude.ecomon.emission;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import ua.dolphiedude.ecomon.facility.Facility;
 import ua.dolphiedude.ecomon.substance.Substance;
 
 import java.math.BigDecimal;
 
 @Entity
-@Data public class Emission {
+@Getter
+@Setter
+public class Emission {
 
     @Id
     @GeneratedValue
     @Column(name = "id_emission")
     private Long id;
-
 
     @ManyToOne
     @JoinColumn(name = "id_facility")

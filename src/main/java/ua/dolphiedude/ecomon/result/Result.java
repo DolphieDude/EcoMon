@@ -3,7 +3,6 @@ package ua.dolphiedude.ecomon.result;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.Formula;
 import ua.dolphiedude.ecomon.emission.Emission;
 
 import java.math.BigDecimal;
@@ -12,6 +11,7 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 public class Result {
+
     @Id
     @GeneratedValue
     @Column(name = "id_result")
@@ -22,4 +22,5 @@ public class Result {
     private Emission resultEmission;
 
     private BigDecimal taxesValue;
+
 }

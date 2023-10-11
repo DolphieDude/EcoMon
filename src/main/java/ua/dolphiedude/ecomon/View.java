@@ -10,7 +10,6 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.router.Route;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import ua.dolphiedude.ecomon.emission.Emission;
 import ua.dolphiedude.ecomon.emission.EmissionRepository;
@@ -98,7 +97,6 @@ public class View extends VerticalLayout {
 //        });
 
 
-
         emissionSubstance.setItems(substanceRepository.findAll());
 
         var emissionLayout = new HorizontalLayout();
@@ -128,9 +126,7 @@ public class View extends VerticalLayout {
         calculateResultsButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         resultLayout.add(calculateResultsButton);
 
-        calculateResultsButton.addClickListener(calculateResults -> {
-            resultService.calculateAndCreateResults();
-        });
+        calculateResultsButton.addClickListener(calculateResults -> resultService.calculateAndCreateResults());
 
         add(resultLayout);
 
@@ -146,7 +142,7 @@ public class View extends VerticalLayout {
         Button addButton = new Button("Add");
         addButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         layout.add(addButton);
-        addButton.addClickListener(add  -> {
+        addButton.addClickListener(add -> {
             try {
                 ENTITY bean = beanType.getDeclaredConstructor().newInstance();
                 binder.writeBean(bean);

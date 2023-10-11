@@ -4,10 +4,14 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
-@Data public class Substance {
+@Getter
+@Setter
+public class Substance {
+
     @Id
     @GeneratedValue
     @Column(name = "id_substance")

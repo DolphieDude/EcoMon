@@ -1,11 +1,16 @@
 package ua.dolphiedude.ecomon.facility;
 
-import jakarta.persistence.*;
-import lombok.Data;
-
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
-@Data public class Facility {
+@Getter
+@Setter
+public class Facility {
 
     @Id
     @GeneratedValue
