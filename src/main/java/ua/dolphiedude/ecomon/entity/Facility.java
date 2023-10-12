@@ -1,4 +1,4 @@
-package ua.dolphiedude.ecomon.facility;
+package ua.dolphiedude.ecomon.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

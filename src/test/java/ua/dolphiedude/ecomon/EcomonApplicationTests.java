@@ -3,9 +3,9 @@ package ua.dolphiedude.ecomon;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import ua.dolphiedude.ecomon.emission.EmissionRepository;
-import ua.dolphiedude.ecomon.facility.FacilityRepository;
-import ua.dolphiedude.ecomon.substance.SubstanceRepository;
+import ua.dolphiedude.ecomon.repository.EmissionRepository;
+import ua.dolphiedude.ecomon.repository.FacilityRepository;
+import ua.dolphiedude.ecomon.repository.SubstanceRepository;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 

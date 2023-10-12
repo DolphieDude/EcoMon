@@ -1,10 +1,8 @@
-package ua.dolphiedude.ecomon.emission;
+package ua.dolphiedude.ecomon.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import ua.dolphiedude.ecomon.facility.Facility;
-import ua.dolphiedude.ecomon.substance.Substance;
 
 import java.math.BigDecimal;
 

@@ -1,9 +1,11 @@
-package ua.dolphiedude.ecomon.result;
+package ua.dolphiedude.ecomon.service;
 
 import org.springframework.stereotype.Service;
-import ua.dolphiedude.ecomon.emission.Emission;
-import ua.dolphiedude.ecomon.emission.EmissionRepository;
-import ua.dolphiedude.ecomon.tax.TaxRepository;
+import ua.dolphiedude.ecomon.entity.Emission;
+import ua.dolphiedude.ecomon.repository.EmissionRepository;
+import ua.dolphiedude.ecomon.entity.Result;
+import ua.dolphiedude.ecomon.repository.ResultRepository;
+import ua.dolphiedude.ecomon.repository.TaxRepository;
 
 import java.math.BigDecimal;
 import java.util.List;
