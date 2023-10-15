@@ -27,7 +27,7 @@ class EcomonApplicationTests {
 
 
 	@Test
-	public void contextLoads() throws Exception {
+	public void contextLoads() {
 		assertThat(facilityRepository).isNotNull();
 		assertThat(substanceRepository).isNotNull();
 		assertThat(emissionRepository).isNotNull();
