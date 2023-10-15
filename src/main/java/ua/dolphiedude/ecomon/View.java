@@ -1,5 +1,6 @@
 package ua.dolphiedude.ecomon;
 
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -7,6 +8,7 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.page.Page;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.router.Route;
@@ -126,11 +128,16 @@ public class View extends VerticalLayout {
         calculateResultsButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         resultLayout.add(calculateResultsButton);
 
-        calculateResultsButton.addClickListener(calculateResults -> resultService.calculateAndCreateResults());
+        calculateResultsButton.addClickListener(calculateResults -> {
+            resultService.calculateAndCreateResults();
+            UI.getCurrent().getPage().reload();
+        });
 
         add(resultLayout);
 
-        resultGrid.setColumns("id", "resultEmission.emissionFacility", "resultEmission.emissionSubstance", "taxesValue");
+        resultGrid.setColumns("id", "resultEmission.emissionFacility", "resultEmission.emissionSubstance",
+                            "resultEmission.year", "taxesValue");
+//        resultGrid.setItems(resultRepository.findByResultYear(2020));
         resultGrid.setItems(resultRepository.findAll());
         add(resultGrid);
     }
@@ -148,6 +155,7 @@ public class View extends VerticalLayout {
                 binder.writeBean(bean);
                 repository.save(bean);
                 binder.readBean(beanType.getDeclaredConstructor().newInstance());
+                UI.getCurrent().getPage().reload();
             } catch (Exception e) {
                 e.printStackTrace();
             }
