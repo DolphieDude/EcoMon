@@ -25,6 +25,8 @@ import ua.dolphiedude.ecomon.repository.SubstanceRepository;
 import ua.dolphiedude.ecomon.entity.Tax;
 import ua.dolphiedude.ecomon.repository.TaxRepository;
 
+import java.util.List;
+
 
 @Route("")
 public class View extends VerticalLayout {
@@ -57,6 +59,8 @@ public class View extends VerticalLayout {
 
     private final Grid<Result> resultGrid = new Grid<>(Result.class);
 
+    private List<Result> filteredResult;
+
 
     public View(FacilityRepository facilityRepository, SubstanceRepository substanceRepository,
                 EmissionRepository emissionRepository, TaxRepository taxRepository,
@@ -65,7 +69,7 @@ public class View extends VerticalLayout {
         add(new H3("Facility"));
         facilityBinder.bind(facilityName, "name");
         var facilityLayout = new HorizontalLayout();
-        facilityLayout.add(facilityName, activity, ownership, ecologicalDescription);
+        facilityLayout.add(facilityName,    activity, ownership, ecologicalDescription);
         add(getForm(facilityLayout, facilityBinder, facilityRepository, Facility.class));
 
         facilityGrid.setColumns("id", "name", "activity", "ownership", "ecologicalDescription");
@@ -124,22 +128,54 @@ public class View extends VerticalLayout {
 
         add(new H3("Result"));
         var resultLayout = new HorizontalLayout();
+
         Button calculateResultsButton = new Button("Calculate Results");
         calculateResultsButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        resultLayout.add(calculateResultsButton);
 
         calculateResultsButton.addClickListener(calculateResults -> {
             resultService.calculateAndCreateResults();
             UI.getCurrent().getPage().reload();
         });
+        add(calculateResultsButton);
 
-        add(resultLayout);
+        final ComboBox<Facility> filterForResultFacility = new ComboBox<>("Facility");
+        filterForResultFacility.setItems(facilityRepository.findAll());
+        final TextField filterForResultYear = new TextField("Year");
+
+        Button filterResultButton = new Button("Filter");
+        filterResultButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        resultLayout.setAlignItems(Alignment.BASELINE);
+        resultLayout.add(filterForResultFacility, filterForResultYear, filterResultButton);
+
+        filteredResult = resultRepository.findAll();
+        filterResultButton.addClickListener(chooseFilter -> {
+            Facility facilityValue = filterForResultFacility.getValue();
+            Integer yearValue;
+            try {
+                yearValue = Integer.valueOf(filterForResultYear.getValue());
+            }
+            catch (NumberFormatException exception) {
+                yearValue = null;
+            }
+
+            if (facilityValue == null) {
+                filteredResult = resultRepository.findByResultYear(yearValue);
+            }
+            else if (yearValue == null) {
+                filteredResult = resultRepository.findByResultFacility(facilityValue);
+            }
+            else {
+                filteredResult = resultRepository.findByResultFacilityAndYear(facilityValue, yearValue);
+            }
+            resultGrid.setItems(filteredResult);
+            resultGrid.getDataProvider().refreshAll();
+        });
 
         resultGrid.setColumns("id", "resultEmission.emissionFacility", "resultEmission.emissionSubstance",
-                            "resultEmission.year", "taxesValue");
+                "resultEmission.year", "taxesValue");
 //        resultGrid.setItems(resultRepository.findByResultYear(2020));
         resultGrid.setItems(resultRepository.findAll());
-        add(resultGrid);
+        add(resultLayout, resultGrid);
     }
 
     private <ENTITY, T extends JpaRepository<ENTITY, Long>> HorizontalLayout getForm(HorizontalLayout layout, Binder<ENTITY> binder, T repository, Class<ENTITY> beanType) {

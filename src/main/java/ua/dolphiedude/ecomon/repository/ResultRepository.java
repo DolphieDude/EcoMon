@@ -10,12 +10,12 @@ import java.util.List;
 
 @Repository
 public interface ResultRepository extends JpaRepository<Result, Long> {
-    @Query("select res from Result res where res.resultEmission = :facility")
+    @Query("select res from Result res where res.resultEmission.emissionFacility = :facility")
     List<Result> findByResultFacility(Facility facility);
 
     @Query("select res from Result res where res.resultEmission.year = :year")
     List<Result> findByResultYear(Integer year);
 
-    @Query("select res from Result res where res.resultEmission = :facility and res.resultEmission.year = :year")
+    @Query("select res from Result res where res.resultEmission.emissionFacility = :facility and res.resultEmission.year = :year")
     List<Result> findByResultFacilityAndYear(Facility facility, Integer year);
 }
