@@ -1,5 +1,6 @@
 package ua.dolphiedude.ecomon;
 
+import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -91,6 +92,7 @@ public class View extends VerticalLayout {
 
         add(new H3("Emission"));
         emissionFacility.setItems(facilityRepository.findAll());
+        emissionFacility.setClearButtonVisible(true);
 
 //        Good decision for cases when need to show in combobox something different from actual items in it:
 //
@@ -104,6 +106,7 @@ public class View extends VerticalLayout {
 
 
         emissionSubstance.setItems(substanceRepository.findAll());
+        emissionSubstance.setClearButtonVisible(true);
 
         var emissionLayout = new HorizontalLayout();
         emissionLayout.add(emissionFacility, emissionSubstance, year, amount);
@@ -116,6 +119,7 @@ public class View extends VerticalLayout {
 
         add(new H3("Tax"));
         taxSubstance.setItems(substanceRepository.findAll());
+        taxSubstance.setClearButtonVisible(true);
 
         var taxLayout = new HorizontalLayout();
         taxLayout.add(taxSubstance, rate);
@@ -140,12 +144,17 @@ public class View extends VerticalLayout {
 
         final ComboBox<Facility> filterForResultFacility = new ComboBox<>("Facility");
         filterForResultFacility.setItems(facilityRepository.findAll());
+        filterForResultFacility.setClearButtonVisible(true);
         final TextField filterForResultYear = new TextField("Year");
 
         Button filterResultButton = new Button("Filter");
         filterResultButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         resultLayout.setAlignItems(Alignment.BASELINE);
         resultLayout.add(filterForResultFacility, filterForResultYear, filterResultButton);
+
+        TextField sumField = new TextField("Total sum");
+        sumField.setReadOnly(true);
+        sumField.getStyle().set("font-size", "24px");
 
         filteredResult = resultRepository.findAll();
         filterResultButton.addClickListener(chooseFilter -> {
@@ -169,13 +178,16 @@ public class View extends VerticalLayout {
             }
             resultGrid.setItems(filteredResult);
             resultGrid.getDataProvider().refreshAll();
+
+            sumField.setValue(resultService.getSumOfResult(filteredResult) + " ₴");
         });
 
         resultGrid.setColumns("id", "resultEmission.emissionFacility", "resultEmission.emissionSubstance",
                 "resultEmission.year", "taxesValue");
-//        resultGrid.setItems(resultRepository.findByResultYear(2020));
-        resultGrid.setItems(resultRepository.findAll());
-        add(resultLayout, resultGrid);
+        resultGrid.setItems(filteredResult);
+        sumField.setValue(resultService.getSumOfResult(filteredResult) + " ₴");
+
+        add(resultLayout, sumField, resultGrid);
     }
 
     private <ENTITY, T extends JpaRepository<ENTITY, Long>> HorizontalLayout getForm(HorizontalLayout layout, Binder<ENTITY> binder, T repository, Class<ENTITY> beanType) {

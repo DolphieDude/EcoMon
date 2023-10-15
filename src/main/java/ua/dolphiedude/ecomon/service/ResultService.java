@@ -43,4 +43,11 @@ public class ResultService {
         }
     }
 
+    public BigDecimal getSumOfResult(List<Result> results) {
+        BigDecimal sum = new BigDecimal(0);
+        for (Result result : results) {
+            sum = sum.add(result.getTaxesValue());
+        }
+        return sum;
+    }
 }
