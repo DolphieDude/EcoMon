@@ -1,14 +1,14 @@
 package ua.dolphiedude.ecomon.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 public class Result {
 
     @Id
@@ -21,5 +21,9 @@ public class Result {
     private Emission resultEmission;
 
     private BigDecimal taxesValue;
+
+    public Result(BigDecimal taxesValue) {
+        this.taxesValue = taxesValue;
+    }
 
 }

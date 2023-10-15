@@ -3,9 +3,7 @@ package ua.dolphiedude.ecomon;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import ua.dolphiedude.ecomon.repository.EmissionRepository;
-import ua.dolphiedude.ecomon.repository.FacilityRepository;
-import ua.dolphiedude.ecomon.repository.SubstanceRepository;
+import ua.dolphiedude.ecomon.repository.*;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
@@ -21,11 +19,20 @@ class EcomonApplicationTests {
 	@Autowired
 	private EmissionRepository emissionRepository;
 
+	@Autowired
+	private TaxRepository taxRepository;
+
+	@Autowired
+	private ResultRepository resultRepository;
+
+
 	@Test
 	public void contextLoads() throws Exception {
 		assertThat(facilityRepository).isNotNull();
 		assertThat(substanceRepository).isNotNull();
 		assertThat(emissionRepository).isNotNull();
+		assertThat(taxRepository).isNotNull();
+		assertThat(resultRepository).isNotNull();
 	}
 
 }
