@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import ua.dolphiedude.ecomon.entity.Result;
+import ua.dolphiedude.ecomon.repository.ResultRepository;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -14,10 +15,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 public class ResultServiceTest {
 
+    @Autowired
+    ResultRepository resultRepository;
 
     @Autowired
     ResultService resultService;
 
+    @Test
+    public void testCalculateAndCreateResults() {
+        List<Result> resultList = resultRepository.findAll();
+        for (Result r: resultList) {
+            System.out.println(r);
+        }
+    }
     @Test
     public void shouldReturnSumOfTaxesValuesOfResultsList() {
         List<Result> resultList = new ArrayList<>();

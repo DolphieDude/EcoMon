@@ -9,6 +9,7 @@ import ua.dolphiedude.ecomon.repository.TaxRepository;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class ResultService {
@@ -30,7 +31,10 @@ public class ResultService {
         List<Emission> emissionCollection = emissionRepository.findAll();
 
         for (Emission emission : emissionCollection) {
-            Result result = new Result();
+            Result result;
+            Result foundResult = resultRepository.findByResultEmission(emission);
+            result = Objects.requireNonNullElseGet(foundResult, Result::new);
+
             BigDecimal rate = taxRepository.findByTaxSubstance(emission.getEmissionSubstance()).getRate();
             BigDecimal amount = emission.getAmount();
 
