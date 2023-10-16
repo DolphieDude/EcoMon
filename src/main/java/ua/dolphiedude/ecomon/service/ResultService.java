@@ -1,5 +1,6 @@
 package ua.dolphiedude.ecomon.service;
 
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import ua.dolphiedude.ecomon.entity.Emission;
 import ua.dolphiedude.ecomon.repository.EmissionRepository;
@@ -11,6 +12,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 
+@Transactional
 @Service
 public class ResultService {
 

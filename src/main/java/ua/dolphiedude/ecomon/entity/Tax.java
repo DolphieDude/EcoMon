@@ -2,6 +2,7 @@ package ua.dolphiedude.ecomon.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
@@ -9,6 +10,7 @@ import java.math.BigDecimal;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 public class Tax {
 
     @Id
@@ -22,4 +24,12 @@ public class Tax {
 
     private BigDecimal rate;
 
+    public Tax(Substance taxSubstance, BigDecimal rate) {
+        this.taxSubstance = taxSubstance;
+        this.rate = rate;
+    }
+
+    public Tax(BigDecimal rate) {
+        this.rate = rate;
+    }
 }

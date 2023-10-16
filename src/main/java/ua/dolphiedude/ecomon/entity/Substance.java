@@ -5,11 +5,13 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 public class Substance {
 
     @Id
@@ -27,4 +29,9 @@ public class Substance {
         return name;
     }
 
+    public Substance(String name, String units, Double gdk) {
+        this.name = name;
+        this.units = units;
+        this.gdk = gdk;
+    }
 }
