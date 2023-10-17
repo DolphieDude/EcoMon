@@ -8,6 +8,6 @@ import ua.dolphiedude.ecomon.entity.Tax;
 @Repository
 public interface TaxRepository extends JpaRepository<Tax, Long> {
 
-    Tax findByTaxSubstance(Substance substance);
+    Tax findBySubstance(Substance substance);
 
 }

@@ -1,9 +1,6 @@
 package ua.dolphiedude.ecomon.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,25 +10,21 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class Substance {
-
     @Id
-    @GeneratedValue
-    @Column(name = "id_substance")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
+    @Column(name = "name")
     private String name;
+    @Column(name = "units")
     private String units;
 
-    private Double gdk;
+    @Column(name = "mass_consumption")
+    private Double massConsumption;
 
     @Override
     public String toString() {
         return name;
-    }
-
-    public Substance(String name, String units, Double gdk) {
-        this.name = name;
-        this.units = units;
-        this.gdk = gdk;
     }
 }

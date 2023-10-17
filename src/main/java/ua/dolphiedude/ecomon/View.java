@@ -1,6 +1,5 @@
 package ua.dolphiedude.ecomon;
 
-import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -9,22 +8,13 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.page.Page;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.router.Route;
 import org.springframework.data.jpa.repository.JpaRepository;
-import ua.dolphiedude.ecomon.entity.Emission;
-import ua.dolphiedude.ecomon.repository.EmissionRepository;
-import ua.dolphiedude.ecomon.entity.Facility;
-import ua.dolphiedude.ecomon.repository.FacilityRepository;
-import ua.dolphiedude.ecomon.entity.Result;
-import ua.dolphiedude.ecomon.repository.ResultRepository;
+import ua.dolphiedude.ecomon.entity.*;
+import ua.dolphiedude.ecomon.repository.*;
 import ua.dolphiedude.ecomon.service.ResultService;
-import ua.dolphiedude.ecomon.entity.Substance;
-import ua.dolphiedude.ecomon.repository.SubstanceRepository;
-import ua.dolphiedude.ecomon.entity.Tax;
-import ua.dolphiedude.ecomon.repository.TaxRepository;
 
 import java.util.List;
 
@@ -32,7 +22,7 @@ import java.util.List;
 @Route("")
 public class View extends VerticalLayout {
 
-    private final TextField facilityName = new TextField("Facility Name");
+    private final TextField facilityName = new TextField("Name");
     private final TextField activity = new TextField("Activity");
     private final TextField ownership = new TextField("Ownership");
     private final TextField ecologicalDescription = new TextField("Ecological Description");
@@ -40,14 +30,14 @@ public class View extends VerticalLayout {
     private final Grid<Facility> facilityGrid = new Grid<>(Facility.class);
 
 
-    private final TextField substanceName = new TextField("Substance Name");
-    private final TextField gdk = new TextField("GDK");
+    private final TextField substanceName = new TextField("Name");
+    private final TextField massConsumption = new TextField("Mass Consumption");
     private final TextField units = new TextField("Units");
     private final Binder<Substance> substanceBinder = new Binder<>(Substance.class);
     private final Grid<Substance> substanceGrid = new Grid<>(Substance.class);
 
-    private final ComboBox<Facility> emissionFacility = new ComboBox<>("ID of facility");
-    private final ComboBox<Substance> emissionSubstance = new ComboBox<>("ID of substance");
+    private final ComboBox<Facility> emissionFacility = new ComboBox<>("Facility of emission");
+    private final ComboBox<Substance> emissionSubstance = new ComboBox<>("Substance of emission");
     private final TextField year = new TextField("Year");
     private final TextField amount = new TextField("Amount");
     private final Binder<Emission> emissionBinder = new Binder<>(Emission.class);
@@ -70,7 +60,7 @@ public class View extends VerticalLayout {
         add(new H3("Facility"));
         facilityBinder.bind(facilityName, "name");
         var facilityLayout = new HorizontalLayout();
-        facilityLayout.add(facilityName,    activity, ownership, ecologicalDescription);
+        facilityLayout.add(facilityName, activity, ownership, ecologicalDescription);
         add(getForm(facilityLayout, facilityBinder, facilityRepository, Facility.class));
 
         facilityGrid.setColumns("id", "name", "activity", "ownership", "ecologicalDescription");
@@ -81,10 +71,10 @@ public class View extends VerticalLayout {
         add(new H3("Substance"));
         substanceBinder.bind(substanceName, "name");
         var substanceLayout = new HorizontalLayout();
-        substanceLayout.add(substanceName, gdk, units);
+        substanceLayout.add(substanceName, massConsumption, units);
         add(getForm(substanceLayout, substanceBinder, substanceRepository, Substance.class));
 
-        substanceGrid.setColumns("id", "name", "gdk", "units");
+        substanceGrid.setColumns("id", "name", "massConsumption", "units");
         substanceGrid.setItems(substanceRepository.findAll());
         add(substanceGrid);
         add(new H3("\n"));
@@ -112,7 +102,7 @@ public class View extends VerticalLayout {
         emissionLayout.add(emissionFacility, emissionSubstance, year, amount);
         add(getForm(emissionLayout, emissionBinder, emissionRepository, Emission.class));
 
-        emissionGrid.setColumns("id", "emissionFacility", "emissionSubstance", "year", "amount");
+        emissionGrid.setColumns("id", "facility", "substance", "year", "amount");
         emissionGrid.setItems(emissionRepository.findAll());
         add(emissionGrid);
         add(new H3("\n"));
@@ -125,7 +115,7 @@ public class View extends VerticalLayout {
         taxLayout.add(taxSubstance, rate);
         add(getForm(taxLayout, taxBinder, taxRepository, Tax.class));
 
-        taxGrid.setColumns("id", "taxSubstance", "rate");
+        taxGrid.setColumns("id", "substance", "rate");
         taxGrid.setItems(taxRepository.findAll());
         add(taxGrid);
         add(new H3("\n"));
@@ -162,19 +152,16 @@ public class View extends VerticalLayout {
             Integer yearValue;
             try {
                 yearValue = Integer.valueOf(filterForResultYear.getValue());
-            }
-            catch (NumberFormatException exception) {
+            } catch (NumberFormatException exception) {
                 yearValue = null;
             }
 
             if (facilityValue == null) {
-                filteredResult = resultRepository.findByResultYear(yearValue);
-            }
-            else if (yearValue == null) {
-                filteredResult = resultRepository.findByResultFacility(facilityValue);
-            }
-            else {
-                filteredResult = resultRepository.findByResultFacilityAndYear(facilityValue, yearValue);
+                filteredResult = resultRepository.findByYear(yearValue);
+            } else if (yearValue == null) {
+                filteredResult = resultRepository.findByFacility(facilityValue);
+            } else {
+                filteredResult = resultRepository.findByFacilityAndYear(facilityValue, yearValue);
             }
             resultGrid.setItems(filteredResult);
             resultGrid.getDataProvider().refreshAll();
@@ -182,8 +169,8 @@ public class View extends VerticalLayout {
             sumField.setValue(resultService.getSumOfResult(filteredResult) + " ₴");
         });
 
-        resultGrid.setColumns("id", "resultEmission.emissionFacility", "resultEmission.emissionSubstance",
-                "resultEmission.year", "taxesValue");
+        resultGrid.setColumns("id", "emission.facility", "emission.substance",
+                "emission.year", "taxesValue");
         resultGrid.setItems(filteredResult);
         sumField.setValue(resultService.getSumOfResult(filteredResult) + " ₴");
 

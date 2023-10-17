@@ -3,8 +3,8 @@ package ua.dolphiedude.ecomon.service;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import ua.dolphiedude.ecomon.entity.Emission;
-import ua.dolphiedude.ecomon.repository.EmissionRepository;
 import ua.dolphiedude.ecomon.entity.Result;
+import ua.dolphiedude.ecomon.repository.EmissionRepository;
 import ua.dolphiedude.ecomon.repository.ResultRepository;
 import ua.dolphiedude.ecomon.repository.TaxRepository;
 
@@ -15,7 +15,6 @@ import java.util.Objects;
 @Transactional
 @Service
 public class ResultService {
-
     private final EmissionRepository emissionRepository;
 
     private final TaxRepository taxRepository;
@@ -34,13 +33,13 @@ public class ResultService {
 
         for (Emission emission : emissionCollection) {
             Result result;
-            Result foundResult = resultRepository.findByResultEmission(emission);
+            Result foundResult = resultRepository.findByEmission(emission);
             result = Objects.requireNonNullElseGet(foundResult, Result::new);
 
-            BigDecimal rate = taxRepository.findByTaxSubstance(emission.getEmissionSubstance()).getRate();
+            BigDecimal rate = taxRepository.findBySubstance(emission.getSubstance()).getRate();
             BigDecimal amount = emission.getAmount();
 
-            result.setResultEmission(emission);
+            result.setEmission(emission);
 
             BigDecimal taxesValue = amount.multiply(rate);
             result.setTaxesValue(taxesValue);

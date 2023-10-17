@@ -14,31 +14,26 @@ import java.math.BigDecimal;
 public class Emission {
 
     @Id
-    @GeneratedValue
-    @Column(name = "id_emission")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "id_facility")
-    private Facility emissionFacility;
+    @JoinColumn(name = "facility_id")
+    private Facility facility;
 
     @ManyToOne
-    @JoinColumn(name = "id_substance")
-    private Substance emissionSubstance;
+    @JoinColumn(name = "substance_id")
+    private Substance substance;
 
+    @Column(name = "year")
     private Integer year;
 
+    @Column(name = "amount")
     private BigDecimal amount;
 
-    public Emission(Facility emissionFacility, Substance emissionSubstance, Integer year, BigDecimal amount) {
-        this.emissionFacility = emissionFacility;
-        this.emissionSubstance = emissionSubstance;
-        this.year = year;
-        this.amount = amount;
-    }
-
-    public Emission(Substance emissionSubstance, BigDecimal amount) {
-        this.emissionSubstance = emissionSubstance;
+    public Emission(Substance substance, BigDecimal amount) {
+        this.substance = substance;
         this.amount = amount;
     }
 }

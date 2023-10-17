@@ -14,18 +14,18 @@ import java.math.BigDecimal;
 public class Tax {
 
     @Id
-    @GeneratedValue
-    @Column(name = "id_tax")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
     @OneToOne
-    @JoinColumn(name = "id_substance")
-    private Substance taxSubstance;
+    @JoinColumn(name = "substance_id")
+    private Substance substance;
 
     private BigDecimal rate;
 
-    public Tax(Substance taxSubstance, BigDecimal rate) {
-        this.taxSubstance = taxSubstance;
+    public Tax(Substance substance, BigDecimal rate) {
+        this.substance = substance;
         this.rate = rate;
     }
 

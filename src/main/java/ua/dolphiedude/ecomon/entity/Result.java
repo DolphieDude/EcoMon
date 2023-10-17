@@ -14,22 +14,23 @@ import java.util.Objects;
 public class Result {
 
     @Id
-    @GeneratedValue
-    @Column(name = "id_result")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
     @OneToOne
-    @JoinColumn(name = "id_emission")
-    private Emission resultEmission;
+    @JoinColumn(name = "emission_id")
+    private Emission emission;
 
+    @Column(name = "taxes_value")
     private BigDecimal taxesValue;
 
     public Result(BigDecimal taxesValue) {
         this.taxesValue = taxesValue;
     }
 
-    public Result(Emission resultEmission, BigDecimal taxesValue) {
-        this.resultEmission = resultEmission;
+    public Result(Emission emission, BigDecimal taxesValue) {
+        this.emission = emission;
         this.taxesValue = taxesValue;
     }
 
@@ -40,11 +41,11 @@ public class Result {
         if (o == null || getClass() != o.getClass()) return false;
         Result result = (Result) o;
         return Objects.equals(id, result.id) &&
-                Objects.equals(resultEmission, result.resultEmission)&& Objects.equals(taxesValue, result.taxesValue);
+                Objects.equals(emission, result.emission)&& Objects.equals(taxesValue, result.taxesValue);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, resultEmission, taxesValue);
+        return Objects.hash(id, emission, taxesValue);
     }
 }
