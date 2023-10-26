@@ -21,6 +21,9 @@ import java.util.List;
 
 @Route("")
 public class View extends VerticalLayout {
+    private final ResultRepository resultRepository;
+
+    private final ResultService resultService;
 
     private final TextField facilityName = new TextField("Name");
     private final TextField activity = new TextField("Activity");
@@ -48,14 +51,21 @@ public class View extends VerticalLayout {
     private final Binder<Tax> taxBinder = new Binder<>(Tax.class);
     private final Grid<Tax> taxGrid = new Grid<>(Tax.class);
 
-    private final Grid<Result> resultGrid = new Grid<>(Result.class);
+    private final ComboBox<Facility> filterForResultFacility = new ComboBox<>("Facility");
+    private final TextField filterForResultYear = new TextField("Year");
 
     private List<Result> filteredResult;
+
+    private final TextField sumField = new TextField("Total sum");
+
+    private final Grid<Result> resultGrid = new Grid<>(Result.class);
 
 
     public View(FacilityRepository facilityRepository, SubstanceRepository substanceRepository,
                 EmissionRepository emissionRepository, TaxRepository taxRepository,
                 ResultRepository resultRepository, ResultService resultService) {
+        this.resultRepository = resultRepository;
+        this.resultService = resultService;
 
         add(new H3("Facility"));
         facilityBinder.bind(facilityName, "name");
@@ -126,48 +136,23 @@ public class View extends VerticalLayout {
         Button calculateResultsButton = new Button("Calculate Results");
         calculateResultsButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 
-        calculateResultsButton.addClickListener(calculateResults -> {
-            resultService.calculateAndCreateResults();
-            UI.getCurrent().getPage().reload();
-        });
+        calculateResultsButton.addClickListener(clicked -> resultService.calculateAndCreateResults());
         add(calculateResultsButton);
 
-        final ComboBox<Facility> filterForResultFacility = new ComboBox<>("Facility");
+
         filterForResultFacility.setItems(facilityRepository.findAll());
         filterForResultFacility.setClearButtonVisible(true);
-        final TextField filterForResultYear = new TextField("Year");
 
         Button filterResultButton = new Button("Filter");
         filterResultButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         resultLayout.setAlignItems(Alignment.BASELINE);
         resultLayout.add(filterForResultFacility, filterForResultYear, filterResultButton);
 
-        TextField sumField = new TextField("Total sum");
         sumField.setReadOnly(true);
         sumField.getStyle().set("font-size", "24px");
 
         filteredResult = resultRepository.findAll();
-        filterResultButton.addClickListener(chooseFilter -> {
-            Facility facilityValue = filterForResultFacility.getValue();
-            Integer yearValue;
-            try {
-                yearValue = Integer.valueOf(filterForResultYear.getValue());
-            } catch (NumberFormatException exception) {
-                yearValue = null;
-            }
-
-            if (facilityValue == null) {
-                filteredResult = resultRepository.findByYear(yearValue);
-            } else if (yearValue == null) {
-                filteredResult = resultRepository.findByFacility(facilityValue);
-            } else {
-                filteredResult = resultRepository.findByFacilityAndYear(facilityValue, yearValue);
-            }
-            resultGrid.setItems(filteredResult);
-            resultGrid.getDataProvider().refreshAll();
-
-            sumField.setValue(resultService.getSumOfResult(filteredResult) + " ₴");
-        });
+        filterResultButton.addClickListener(clicked -> chooseFilter());
 
         resultGrid.setColumns("id", "emission.facility", "emission.substance",
                 "emission.year", "taxesValue");
@@ -196,5 +181,27 @@ public class View extends VerticalLayout {
             }
         });
         return layout;
+    }
+
+    private void chooseFilter() {
+        Facility facilityValue = filterForResultFacility.getValue();
+        Integer yearValue;
+        try {
+            yearValue = Integer.valueOf(filterForResultYear.getValue());
+        } catch (NumberFormatException exception) {
+            yearValue = null;
+        }
+
+        if (facilityValue == null) {
+            filteredResult = resultRepository.findByYear(yearValue);
+        } else if (yearValue == null) {
+            filteredResult = resultRepository.findByFacility(facilityValue);
+        } else {
+            filteredResult = resultRepository.findByFacilityAndYear(facilityValue, yearValue);
+        }
+        resultGrid.setItems(filteredResult);
+        resultGrid.getDataProvider().refreshAll();
+
+        sumField.setValue(resultService.getSumOfResult(filteredResult) + " ₴");
     }
 }

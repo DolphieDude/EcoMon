@@ -41,7 +41,7 @@ public class Result {
         if (o == null || getClass() != o.getClass()) return false;
         Result result = (Result) o;
         return Objects.equals(id, result.id) &&
-                Objects.equals(emission, result.emission)&& Objects.equals(taxesValue, result.taxesValue);
+                Objects.equals(emission, result.emission) && Objects.equals(taxesValue, result.taxesValue);
     }
 
     @Override
