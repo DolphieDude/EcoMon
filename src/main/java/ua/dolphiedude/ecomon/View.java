@@ -25,13 +25,6 @@ public class View extends VerticalLayout {
 
     private final ResultService resultService;
 
-    private final TextField facilityName = new TextField("Name");
-    private final TextField activity = new TextField("Activity");
-    private final TextField ownership = new TextField("Ownership");
-    private final TextField ecologicalDescription = new TextField("Ecological Description");
-    private final Binder<Facility> facilityBinder = new Binder<>(Facility.class);
-    private final Grid<Facility> facilityGrid = new Grid<>(Facility.class);
-
 
     private final TextField substanceName = new TextField("Name");
     private final TextField massConsumption = new TextField("Mass Consumption");
@@ -68,11 +61,21 @@ public class View extends VerticalLayout {
         this.resultService = resultService;
 
         add(new H3("Facility"));
+        TextField facilityName = new TextField("Name");
+        Binder<Facility> facilityBinder = new Binder<>(Facility.class);
         facilityBinder.bind(facilityName, "name");
         var facilityLayout = new HorizontalLayout();
+        TextField activity = new TextField("Activity");
+        facilityBinder.bind(activity, "activity");
+        TextField ownership = new TextField("Ownership");
+        facilityBinder.bind(ownership, "ownership");
+        TextField ecologicalDescription = new TextField("Ecological Description");
+        facilityBinder.bind(ecologicalDescription, "ecologicalDescription");
+
         facilityLayout.add(facilityName, activity, ownership, ecologicalDescription);
         add(getForm(facilityLayout, facilityBinder, facilityRepository, Facility.class));
 
+        Grid<Facility> facilityGrid = new Grid<>(Facility.class);
         facilityGrid.setColumns("id", "name", "activity", "ownership", "ecologicalDescription");
         facilityGrid.setItems(facilityRepository.findAll());
         add(facilityGrid);

@@ -1,6 +1,7 @@
 package ua.dolphiedude.ecomon.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,6 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Facility {
 
     @Id
@@ -24,6 +26,13 @@ public class Facility {
     private String ownership;
     @Column(name = "ecological_description")
     private String ecologicalDescription;
+
+    public Facility(String name, String activity, String ownership, String ecologicalDescription) {
+        this.name = name;
+        this.activity = activity;
+        this.ownership = ownership;
+        this.ecologicalDescription = ecologicalDescription;
+    }
 
     @Override
     public String toString() {

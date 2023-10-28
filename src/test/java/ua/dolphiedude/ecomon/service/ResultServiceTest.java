@@ -14,8 +14,7 @@ import ua.dolphiedude.ecomon.repository.ResultRepository;
 import ua.dolphiedude.ecomon.repository.TaxRepository;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -59,9 +58,15 @@ class ResultServiceTest {
         resultList.add(new Result(new BigDecimal("15.25")));
         resultList.add(new Result(new BigDecimal("20.75")));
 
+        resultList.clear();
+
         BigDecimal expected = new BigDecimal("10.5").add(new BigDecimal("15.25"))
                 .add(new BigDecimal("20.75"));
         BigDecimal actual = service.getSumOfResult(resultList);
+
+        Integer[] arr = {1, 2, 3};
+        Arrays.sort(arr, Collections.reverseOrder());
+        System.out.println(Arrays.toString(arr));
         assertEquals(expected, actual);
     }
 }
