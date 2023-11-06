@@ -26,12 +26,6 @@ public class View extends VerticalLayout {
     private final ResultService resultService;
 
 
-    private final TextField substanceName = new TextField("Name");
-    private final TextField massConsumption = new TextField("Mass Consumption");
-    private final TextField units = new TextField("Units");
-    private final Binder<Substance> substanceBinder = new Binder<>(Substance.class);
-    private final Grid<Substance> substanceGrid = new Grid<>(Substance.class);
-
     private final ComboBox<Facility> emissionFacility = new ComboBox<>("Facility of emission");
     private final ComboBox<Substance> emissionSubstance = new ComboBox<>("Substance of emission");
     private final TextField year = new TextField("Year");
@@ -60,33 +54,48 @@ public class View extends VerticalLayout {
         this.resultRepository = resultRepository;
         this.resultService = resultService;
 
-        add(new H3("Facility"));
-        TextField facilityName = new TextField("Name");
-        Binder<Facility> facilityBinder = new Binder<>(Facility.class);
-        facilityBinder.bind(facilityName, "name");
         var facilityLayout = new HorizontalLayout();
+        Binder<Facility> facilityBinder = new Binder<>(Facility.class);
+        Grid<Facility> facilityGrid = new Grid<>(Facility.class);
+        add(new H3("Facility"));
+
+        TextField facilityName = new TextField("Name");
+        facilityBinder.bind(facilityName, "name");
+
         TextField activity = new TextField("Activity");
         facilityBinder.bind(activity, "activity");
+
         TextField ownership = new TextField("Ownership");
         facilityBinder.bind(ownership, "ownership");
+
         TextField ecologicalDescription = new TextField("Ecological Description");
         facilityBinder.bind(ecologicalDescription, "ecologicalDescription");
 
         facilityLayout.add(facilityName, activity, ownership, ecologicalDescription);
         add(getForm(facilityLayout, facilityBinder, facilityRepository, Facility.class));
 
-        Grid<Facility> facilityGrid = new Grid<>(Facility.class);
         facilityGrid.setColumns("id", "name", "activity", "ownership", "ecologicalDescription");
         facilityGrid.setItems(facilityRepository.findAll());
         add(facilityGrid);
         add(new H3("\n"));
 
         add(new H3("Substance"));
-        substanceBinder.bind(substanceName, "name");
         var substanceLayout = new HorizontalLayout();
+        Binder<Substance> substanceBinder = new Binder<>(Substance.class);
+
+        TextField substanceName = new TextField("Name");
+        substanceBinder.bind(substanceName, "name");
+
+        TextField massConsumption = new TextField("Mass Consumption");
+        substanceBinder.bind(massConsumption, "massConsumption");
+
+        TextField units = new TextField("Units");
+        substanceBinder.bind(units, "units");
+
         substanceLayout.add(substanceName, massConsumption, units);
         add(getForm(substanceLayout, substanceBinder, substanceRepository, Substance.class));
 
+        Grid<Substance> substanceGrid = new Grid<>(Substance.class);
         substanceGrid.setColumns("id", "name", "massConsumption", "units");
         substanceGrid.setItems(substanceRepository.findAll());
         add(substanceGrid);
