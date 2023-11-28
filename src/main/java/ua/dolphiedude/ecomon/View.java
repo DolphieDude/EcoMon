@@ -11,19 +11,24 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.router.Route;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import ua.dolphiedude.ecomon.entity.*;
 import ua.dolphiedude.ecomon.repository.*;
 import ua.dolphiedude.ecomon.service.ResultService;
+import ua.dolphiedude.ecomon.service.RiskService;
 
 import java.util.List;
 
 
 @Route("")
+@Transactional
 public class View extends VerticalLayout {
     private final ResultRepository resultRepository;
 
     private final ResultService resultService;
+
+    private final RiskRepository riskRepository;
 
 
     private final ComboBox<Facility> emissionFacility = new ComboBox<>("Facility of emission");
@@ -47,12 +52,24 @@ public class View extends VerticalLayout {
 
     private final Grid<Result> resultGrid = new Grid<>(Result.class);
 
+    private final ComboBox<Facility> filterForRiskFacility = new ComboBox<>("Facility");
+    private final ComboBox<Substance> filterForRiskSubstance = new ComboBox<>("Substance");
+    private final TextField filterForRiskYear = new TextField("Year");
+    private List<Risk> filteredRisk;
+
+    private final Grid<Risk> riskGrid = new Grid<>(Risk.class);
+
+
+
 
     public View(FacilityRepository facilityRepository, SubstanceRepository substanceRepository,
                 EmissionRepository emissionRepository, TaxRepository taxRepository,
-                ResultRepository resultRepository, ResultService resultService) {
+                ResultRepository resultRepository, RiskRepository riskRepository,
+                ResultService resultService, RiskService riskService) {
         this.resultRepository = resultRepository;
         this.resultService = resultService;
+
+        this.riskRepository = riskRepository;
 
         var facilityLayout = new HorizontalLayout();
         Binder<Facility> facilityBinder = new Binder<>(Facility.class);
@@ -96,7 +113,8 @@ public class View extends VerticalLayout {
         add(getForm(substanceLayout, substanceBinder, substanceRepository, Substance.class));
 
         Grid<Substance> substanceGrid = new Grid<>(Substance.class);
-        substanceGrid.setColumns("id", "name", "massConsumption", "units");
+        substanceGrid.setColumns("id", "name", "massConsumption", "units", "refConcentration",
+                "slopeFactor", "tlv", "massFlowRate", "toxicityClass");
         substanceGrid.setItems(substanceRepository.findAll());
         add(substanceGrid);
         add(new H3("\n"));
@@ -124,7 +142,7 @@ public class View extends VerticalLayout {
         emissionLayout.add(emissionFacility, emissionSubstance, year, amount);
         add(getForm(emissionLayout, emissionBinder, emissionRepository, Emission.class));
 
-        emissionGrid.setColumns("id", "facility", "substance", "year", "amount");
+        emissionGrid.setColumns("id", "facility", "substance", "year", "amount", "concentration");
         emissionGrid.setItems(emissionRepository.findAll());
         add(emissionGrid);
         add(new H3("\n"));
@@ -172,6 +190,39 @@ public class View extends VerticalLayout {
         sumField.setValue(resultService.getSumOfResult(filteredResult) + " ₴");
 
         add(resultLayout, sumField, resultGrid);
+        add(new H3("\n"));
+
+        add(new H3("Risk"));
+        var riskLayout = new HorizontalLayout();
+
+        Button calculateRisksButton = new Button("Calculate Risks");
+        calculateRisksButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+
+        calculateRisksButton.addClickListener(clicked -> riskService.calculateAndCreateRisks());
+        add(calculateRisksButton);
+
+
+        filterForRiskFacility.setItems(facilityRepository.findAll());
+        filterForRiskFacility.setClearButtonVisible(true);
+
+        filterForRiskSubstance.setItems(substanceRepository.findAll());
+        filterForRiskSubstance.setClearButtonVisible(true);
+
+        Button filterRiskButton = new Button("Filter");
+        filterRiskButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        riskLayout.setAlignItems(Alignment.BASELINE);
+        riskLayout.add(filterForRiskFacility, filterForRiskSubstance,
+                filterForRiskYear, filterRiskButton);
+
+        filteredRisk = riskRepository.findAll();
+        filterRiskButton.addClickListener(clicked -> chooseFilterForRisk());
+
+        riskGrid.setColumns("id", "emission.facility", "emission.substance",
+                "emission.year", "nonCarcinogenRisk", "nonCarcinogenMessage",
+                "carcinogenRisk", "carcinogenMessage");
+        riskGrid.setItems(filteredRisk);
+
+        add(riskLayout, riskGrid);
     }
 
     private <ENTITY, T extends JpaRepository<ENTITY, Long>> HorizontalLayout getForm(HorizontalLayout layout, Binder<ENTITY> binder, T repository, Class<ENTITY> beanType) {
@@ -215,5 +266,29 @@ public class View extends VerticalLayout {
         resultGrid.getDataProvider().refreshAll();
 
         sumField.setValue(resultService.getSumOfResult(filteredResult) + " ₴");
+    }
+
+    private void chooseFilterForRisk() {
+        Facility facilityValue = filterForRiskFacility.getValue();
+        Substance substanceValue = filterForRiskSubstance.getValue();
+        Integer yearValue;
+        try {
+            yearValue = Integer.valueOf(filterForRiskYear.getValue());
+        } catch (NumberFormatException exception) {
+            yearValue = null;
+        }
+
+        if (facilityValue == null && substanceValue == null) {
+            filteredRisk = riskRepository.findByEmissionYear(yearValue);
+        } else if (yearValue == null && substanceValue == null) {
+            filteredRisk = riskRepository.findByEmissionFacility(facilityValue);
+        } else if (facilityValue == null && yearValue == null) {
+            filteredRisk = riskRepository.findByEmissionSubstance(substanceValue);
+        } else {
+            filteredRisk = riskRepository.findByEmissionFacilityAndEmissionSubstanceAndEmissionYear
+                    (facilityValue, substanceValue, yearValue);
+        }
+        riskGrid.setItems(filteredRisk);
+        riskGrid.getDataProvider().refreshAll();
     }
 }

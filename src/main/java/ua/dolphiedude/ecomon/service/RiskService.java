@@ -34,11 +34,11 @@ public class RiskService {
 
             String nonCarcinogenMessage;
             if (nonCarcinogenRisk > 1) {
-                nonCarcinogenMessage = "It may pose a risk, depends on HQ";
+                nonCarcinogenMessage = "High";
             } else if (nonCarcinogenRisk == 1.) {
-                nonCarcinogenMessage = "Allowed risk but cannot be considered acceptable";
+                nonCarcinogenMessage = "Medium";
             } else {
-                nonCarcinogenMessage = "No significant danger";
+                nonCarcinogenMessage = "Low";
             }
             risk.setNonCarcinogenMessage(nonCarcinogenMessage);
 

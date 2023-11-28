@@ -18,7 +18,7 @@ public class Emission {
     @Column(name = "id")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "facility_id")
     private Facility facility;
 
@@ -32,7 +32,7 @@ public class Emission {
     @Column(name = "amount")
     private BigDecimal amount;
 
-    @Column(name = "concentration", columnDefinition = "double(0, 0)")
+    @Column(name = "concentration")
     private Double concentration;
 
     public Emission(Substance substance, BigDecimal amount) {

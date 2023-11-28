@@ -20,7 +20,7 @@ public class Risk {
     private Long id;
 
     @NotNull
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @OneToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "emission_id", nullable = false, referencedColumnName = "id")
     private Emission emission;
 
@@ -32,10 +32,10 @@ public class Risk {
     @Column(name = "carcinogen_message", length = 45)
     private String carcinogenMessage;
 
-    @Column(name = "non_carcinogen_risk", columnDefinition = "double(0, 0) UNSIGNED")
+    @Column(name = "non_carcinogen_risk")
     private Double nonCarcinogenRisk;
 
-    @Column(name = "carcinogen_risk", columnDefinition = "double(0, 0) UNSIGNED")
+    @Column(name = "carcinogen_risk")
     private Double carcinogenRisk;
 
 }
