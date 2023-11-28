@@ -32,6 +32,9 @@ public class Emission {
     @Column(name = "amount")
     private BigDecimal amount;
 
+    @Column(name = "concentration", columnDefinition = "double(0, 0)")
+    private Double concentration;
+
     public Emission(Substance substance, BigDecimal amount) {
         this.substance = substance;
         this.amount = amount;

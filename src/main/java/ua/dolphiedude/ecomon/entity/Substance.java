@@ -6,9 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 @Entity
 @Table(name = "substance")
 @Getter

@@ -12,7 +12,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class RiskToHealth {
+public class Risk {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
