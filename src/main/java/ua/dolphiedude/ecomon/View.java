@@ -8,9 +8,12 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.router.Route;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.Predicate;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import ua.dolphiedude.ecomon.entity.*;
@@ -18,6 +21,7 @@ import ua.dolphiedude.ecomon.repository.*;
 import ua.dolphiedude.ecomon.service.ResultService;
 import ua.dolphiedude.ecomon.service.RiskService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -54,7 +58,7 @@ public class View extends VerticalLayout {
 
     private final ComboBox<Facility> filterForRiskFacility = new ComboBox<>("Facility");
     private final ComboBox<Substance> filterForRiskSubstance = new ComboBox<>("Substance");
-    private final TextField filterForRiskYear = new TextField("Year");
+    private final IntegerField filterForRiskYear = new IntegerField("Year");
     private List<Risk> filteredRisk;
 
     private final Grid<Risk> riskGrid = new Grid<>(Risk.class);
@@ -133,7 +137,6 @@ public class View extends VerticalLayout {
 //            }
 //            return null;
 //        });
-
 
         emissionSubstance.setItems(substanceRepository.findAll());
         emissionSubstance.setClearButtonVisible(true);
@@ -269,25 +272,47 @@ public class View extends VerticalLayout {
     }
 
     private void chooseFilterForRisk() {
-        Facility facilityValue = filterForRiskFacility.getValue();
-        Substance substanceValue = filterForRiskSubstance.getValue();
-        Integer yearValue;
-        try {
-            yearValue = Integer.valueOf(filterForRiskYear.getValue());
-        } catch (NumberFormatException exception) {
-            yearValue = null;
-        }
+        final Facility facilityValue = filterForRiskFacility.getValue();
+        final Substance substanceValue = filterForRiskSubstance.getValue();
+        final Integer yearValue = filterForRiskYear.getValue();
 
-        if (facilityValue == null && substanceValue == null) {
-            filteredRisk = riskRepository.findByEmissionYear(yearValue);
-        } else if (yearValue == null && substanceValue == null) {
-            filteredRisk = riskRepository.findByEmissionFacility(facilityValue);
-        } else if (facilityValue == null && yearValue == null) {
-            filteredRisk = riskRepository.findByEmissionSubstance(substanceValue);
-        } else {
-            filteredRisk = riskRepository.findByEmissionFacilityAndEmissionSubstanceAndEmissionYear
-                    (facilityValue, substanceValue, yearValue);
-        }
+        filteredRisk = riskRepository.findAll((root, query, builder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            Join<Risk, Emission> emissionJoin = root.join("emission");
+
+            if (facilityValue != null) {
+                predicates.add(builder.equal(emissionJoin.get("facility"), facilityValue));
+            }
+
+            if (substanceValue != null) {
+                predicates.add(builder.equal(emissionJoin.get("substance"), substanceValue));
+            }
+
+            if (yearValue != null) {
+                predicates.add(builder.equal(emissionJoin.get("year"), yearValue));
+            }
+
+            return builder.and(predicates.toArray(new Predicate[0]));
+        });
+
+//        if (facilityValue == null && substanceValue == null) {
+//            filteredRisk = riskRepository.findByEmissionYear(yearValue);
+//        } else if (yearValue == null && substanceValue == null) {
+//            filteredRisk = riskRepository.findByEmissionFacility(facilityValue);
+//        } else if (facilityValue == null && yearValue == null) {
+//            filteredRisk = riskRepository.findByEmissionSubstance(substanceValue);
+//        } else if (facilityValue == null) {
+//            filteredRisk = riskRepository.findByEmissionSubstanceAndEmissionYear(substanceValue, yearValue);
+//        } else if (substanceValue == null) {
+//            filteredRisk = riskRepository.findByEmissionFacilityAndEmissionYear(facilityValue, yearValue);
+//        } else if (yearValue == null) {
+//            filteredRisk = riskRepository.findByEmissionFacilityAndEmissionSubstance(facilityValue, substanceValue);
+//        } else {
+//            filteredRisk = riskRepository.findByEmissionFacilityAndEmissionSubstanceAndEmissionYear
+//                    (facilityValue, substanceValue, yearValue);
+//        }
+
         riskGrid.setItems(filteredRisk);
         riskGrid.getDataProvider().refreshAll();
     }
