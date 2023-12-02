@@ -8,6 +8,7 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.BigDecimalField;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
@@ -33,14 +34,6 @@ public class View extends VerticalLayout {
     private final ResultService resultService;
 
     private final RiskRepository riskRepository;
-
-
-    private final ComboBox<Facility> emissionFacility = new ComboBox<>("Facility of emission");
-    private final ComboBox<Substance> emissionSubstance = new ComboBox<>("Substance of emission");
-    private final TextField year = new TextField("Year");
-    private final TextField amount = new TextField("Amount");
-    private final Binder<Emission> emissionBinder = new Binder<>(Emission.class);
-    private final Grid<Emission> emissionGrid = new Grid<>(Emission.class);
 
     private final ComboBox<Substance> taxSubstance = new ComboBox<>("ID of substance");
     private final TextField rate = new TextField("Tax rate");
@@ -125,6 +118,9 @@ public class View extends VerticalLayout {
 
 
         add(new H3("Emission"));
+        final Binder<Emission> emissionBinder = new Binder<>(Emission.class);
+        final ComboBox<Facility> emissionFacility = new ComboBox<>("Facility of emission");
+        emissionBinder.bind(emissionFacility, "facility");
         emissionFacility.setItems(facilityRepository.findAll());
         emissionFacility.setClearButtonVisible(true);
 
@@ -138,13 +134,21 @@ public class View extends VerticalLayout {
 //            return null;
 //        });
 
+        final ComboBox<Substance> emissionSubstance = new ComboBox<>("Substance of emission");
+        emissionBinder.bind(emissionSubstance, "substance");
         emissionSubstance.setItems(substanceRepository.findAll());
         emissionSubstance.setClearButtonVisible(true);
 
         var emissionLayout = new HorizontalLayout();
+        final IntegerField year = new IntegerField("Year");
+        emissionBinder.bind(year, "year");
+        final BigDecimalField amount = new BigDecimalField("Amount");
+        emissionBinder.bind(amount, "amount");
+
         emissionLayout.add(emissionFacility, emissionSubstance, year, amount);
         add(getForm(emissionLayout, emissionBinder, emissionRepository, Emission.class));
 
+        final Grid<Emission> emissionGrid = new Grid<>(Emission.class);
         emissionGrid.setColumns("id", "facility", "substance", "year", "amount", "concentration");
         emissionGrid.setItems(emissionRepository.findAll());
         add(emissionGrid);
@@ -295,23 +299,6 @@ public class View extends VerticalLayout {
 
             return builder.and(predicates.toArray(new Predicate[0]));
         });
-
-//        if (facilityValue == null && substanceValue == null) {
-//            filteredRisk = riskRepository.findByEmissionYear(yearValue);
-//        } else if (yearValue == null && substanceValue == null) {
-//            filteredRisk = riskRepository.findByEmissionFacility(facilityValue);
-//        } else if (facilityValue == null && yearValue == null) {
-//            filteredRisk = riskRepository.findByEmissionSubstance(substanceValue);
-//        } else if (facilityValue == null) {
-//            filteredRisk = riskRepository.findByEmissionSubstanceAndEmissionYear(substanceValue, yearValue);
-//        } else if (substanceValue == null) {
-//            filteredRisk = riskRepository.findByEmissionFacilityAndEmissionYear(facilityValue, yearValue);
-//        } else if (yearValue == null) {
-//            filteredRisk = riskRepository.findByEmissionFacilityAndEmissionSubstance(facilityValue, substanceValue);
-//        } else {
-//            filteredRisk = riskRepository.findByEmissionFacilityAndEmissionSubstanceAndEmissionYear
-//                    (facilityValue, substanceValue, yearValue);
-//        }
 
         riskGrid.setItems(filteredRisk);
         riskGrid.getDataProvider().refreshAll();
