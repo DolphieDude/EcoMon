@@ -22,6 +22,7 @@ public class Tax {
     @JoinColumn(name = "substance_id")
     private Substance substance;
 
+    @Column(name = "rate")
     private BigDecimal rate;
 
     public Tax(Substance substance, BigDecimal rate) {

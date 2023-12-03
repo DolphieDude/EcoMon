@@ -10,6 +10,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.BigDecimalField;
 import com.vaadin.flow.component.textfield.IntegerField;
+import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.router.Route;
@@ -34,11 +35,6 @@ public class View extends VerticalLayout {
     private final ResultService resultService;
 
     private final RiskRepository riskRepository;
-
-    private final ComboBox<Substance> taxSubstance = new ComboBox<>("ID of substance");
-    private final TextField rate = new TextField("Tax rate");
-    private final Binder<Tax> taxBinder = new Binder<>(Tax.class);
-    private final Grid<Tax> taxGrid = new Grid<>(Tax.class);
 
     private final ComboBox<Facility> filterForResultFacility = new ComboBox<>("Facility");
     private final TextField filterForResultYear = new TextField("Year");
@@ -100,13 +96,23 @@ public class View extends VerticalLayout {
         TextField substanceName = new TextField("Name");
         substanceBinder.bind(substanceName, "name");
 
-        TextField massConsumption = new TextField("Mass Consumption");
+        NumberField massConsumption = new NumberField("Mass Consumption");
         substanceBinder.bind(massConsumption, "massConsumption");
 
         TextField units = new TextField("Units");
         substanceBinder.bind(units, "units");
 
-        substanceLayout.add(substanceName, massConsumption, units);
+        NumberField refConcentration = new NumberField("Referenced Concentration");
+        substanceBinder.bind(refConcentration, "refConcentration");
+
+        NumberField tlv = new NumberField("Threshold Limit Value");
+        substanceBinder.bind(tlv, "tlv");
+
+        IntegerField massFlowRate = new IntegerField("Mass Flow Rate");
+        substanceBinder.bind(massFlowRate, "massFlowRate");
+
+        substanceLayout.add(substanceName, massConsumption, units,
+                refConcentration, tlv, massFlowRate);
         add(getForm(substanceLayout, substanceBinder, substanceRepository, Substance.class));
 
         Grid<Substance> substanceGrid = new Grid<>(Substance.class);
@@ -124,15 +130,17 @@ public class View extends VerticalLayout {
         emissionFacility.setItems(facilityRepository.findAll());
         emissionFacility.setClearButtonVisible(true);
 
-//        Good decision for cases when need to show in combobox something different from actual items in it:
-//
-//        idFacility.setItemLabelGenerator(id -> {
-//            List<Facility> list = facilityRepository.findAll();
-//            for (Facility facility: list) {
-//                if (facility.getId().equals(id)) return facility.getName();
-//            }
-//            return null;
-//        });
+/*
+        Good decision for cases when need to show in combobox something different from actual items in it:
+
+        idFacility.setItemLabelGenerator(id -> {
+            List<Facility> list = facilityRepository.findAll();
+            for (Facility facility: list) {
+                if (facility.getId().equals(id)) return facility.getName();
+            }
+            return null;
+        });
+*/
 
         final ComboBox<Substance> emissionSubstance = new ComboBox<>("Substance of emission");
         emissionBinder.bind(emissionSubstance, "substance");
@@ -155,13 +163,21 @@ public class View extends VerticalLayout {
         add(new H3("\n"));
 
         add(new H3("Tax"));
+        final Binder<Tax> taxBinder = new Binder<>(Tax.class);
+
+        final ComboBox<Substance> taxSubstance = new ComboBox<>("ID of substance");
         taxSubstance.setItems(substanceRepository.findAll());
         taxSubstance.setClearButtonVisible(true);
+        taxBinder.bind(taxSubstance, "substance");
+
+        final BigDecimalField rate = new BigDecimalField("Tax rate");
+        taxBinder.bind(rate, "rate");
 
         var taxLayout = new HorizontalLayout();
         taxLayout.add(taxSubstance, rate);
         add(getForm(taxLayout, taxBinder, taxRepository, Tax.class));
 
+        final Grid<Tax> taxGrid = new Grid<>(Tax.class);
         taxGrid.setColumns("id", "substance", "rate");
         taxGrid.setItems(taxRepository.findAll());
         add(taxGrid);
@@ -233,8 +249,6 @@ public class View extends VerticalLayout {
     }
 
     private <ENTITY, T extends JpaRepository<ENTITY, Long>> HorizontalLayout getForm(HorizontalLayout layout, Binder<ENTITY> binder, T repository, Class<ENTITY> beanType) {
-        binder.bindInstanceFields(this);
-
         layout.setAlignItems(Alignment.BASELINE);
         Button addButton = new Button("Add");
         addButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
