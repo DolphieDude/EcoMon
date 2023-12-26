@@ -14,20 +14,4 @@ public interface RiskRepository extends EntityOfEmissionRepository<Risk> {
 
     List<Risk> findAll(Specification<Risk> spec);
 
-    List<Risk> findByEmissionFacilityAndEmissionSubstanceAndEmissionYear(Facility facility, Substance substance, Integer year);
-
-    List<Risk> findByEmissionFacilityAndEmissionSubstance(Facility facility, Substance substance);
-
-    List<Risk> findByEmissionFacilityAndEmissionYear(Facility facility, Integer year);
-
-    List<Risk> findByEmissionSubstanceAndEmissionYear(Substance substance, Integer year);
-
-    List<Risk> findByEmissionFacility(Facility facility);
-
-    List<Risk> findByEmissionSubstance(Substance substance);
-
-    List<Risk> findByEmissionYear(Integer year);
-
-    List<Risk> findByEmissionFacilityId(Long id);
-
 }

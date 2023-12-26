@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ua.dolphiedude.ecomon.entity.Emission;
 import ua.dolphiedude.ecomon.entity.Loss;
+import ua.dolphiedude.ecomon.entity.Result;
 import ua.dolphiedude.ecomon.repository.EmissionRepository;
 import ua.dolphiedude.ecomon.repository.LossRepository;
 
@@ -58,6 +59,14 @@ public class LossService {
 
             lossRepository.save(loss);
         }
+    }
+
+    public BigDecimal getSumOfLoss(List<Loss> losses) {
+        BigDecimal sum = new BigDecimal(0);
+        for (Loss loss : losses) {
+            sum = sum.add(loss.getLossValue());
+        }
+        return sum;
     }
 
 }

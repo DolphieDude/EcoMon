@@ -16,7 +16,6 @@ import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.router.Route;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
-import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import ua.dolphiedude.ecomon.entity.*;
 import ua.dolphiedude.ecomon.repository.*;
@@ -34,8 +33,6 @@ public class View extends VerticalLayout {
 
     private final ResultService resultService;
 
-    private final RiskRepository riskRepository;
-
     private final ComboBox<Facility> filterForResultFacility = new ComboBox<>("Facility");
     private final TextField filterForResultYear = new TextField("Year");
 
@@ -48,21 +45,19 @@ public class View extends VerticalLayout {
     private final ComboBox<Facility> filterForRiskFacility = new ComboBox<>("Facility");
     private final ComboBox<Substance> filterForRiskSubstance = new ComboBox<>("Substance");
     private final IntegerField filterForRiskYear = new IntegerField("Year");
-    private List<Risk> filteredRisk;
+    private final List<Risk> filteredRisk;
 
     private final Grid<Risk> riskGrid = new Grid<>(Risk.class);
-
-    private final LossService lossService;
 
     private final ComboBox<Facility> filterForLossFacility = new ComboBox<>("Facility");
     private final ComboBox<Substance> filterForLossSubstance = new ComboBox<>("Substance");
     private final IntegerField filterForLossYear = new IntegerField("Year");
 
-    private List<Loss> filteredLoss;
+    private final List<Loss> filteredLoss;
 
     private final Grid<Loss> lossGrid = new Grid<>(Loss.class);
 
-
+    private final TextField lossSumField = new TextField("Total sum");
 
     public View(FacilityRepository facilityRepository, SubstanceRepository substanceRepository,
                 EmissionRepository emissionRepository, TaxRepository taxRepository,
@@ -71,9 +66,6 @@ public class View extends VerticalLayout {
                 LossService lossService) {
         this.resultRepository = resultRepository;
         this.resultService = resultService;
-        this.lossService = lossService;
-
-        this.riskRepository = riskRepository;
 
         var facilityLayout = new HorizontalLayout();
         Binder<Facility> facilityBinder = new Binder<>(Facility.class);
@@ -273,7 +265,7 @@ public class View extends VerticalLayout {
 
         calculateLossesButton.addClickListener(clicked -> {
             lossService.calculateAndCreateLosses();
-            lossGrid.getDataProvider().refreshAll();
+            UI.getCurrent().getPage().reload();
         });
         add(calculateLossesButton);
 
@@ -290,17 +282,24 @@ public class View extends VerticalLayout {
         lossLayout.add(filterForLossFacility, filterForLossSubstance,
                 filterForLossYear, filterLossButton);
 
-        filteredLoss = lossRepository.findAll();
-        filterLossButton.addClickListener(clicked -> chooseFilterForEntityOfEmission(filteredLoss, lossRepository,
-                filterForLossFacility.getValue(), filterForLossSubstance.getValue(), filterForLossYear.getValue()));
-        lossGrid.setItems(filteredLoss);
-        lossGrid.getDataProvider().refreshAll();
+        lossSumField.setReadOnly(true);
+        lossSumField.getStyle().set("font-size", "24px");
 
+        filteredLoss = lossRepository.findAll();
+        filterLossButton.addClickListener(clicked -> {
+            chooseFilterForEntityOfEmission(filteredLoss, lossRepository,
+                    filterForLossFacility.getValue(), filterForLossSubstance.getValue(), filterForLossYear.getValue());
+            lossSumField.setValue(lossService.getSumOfLoss(filteredLoss) + " ₴");
+            lossGrid.setItems(filteredLoss);
+            lossGrid.getDataProvider().refreshAll();
+        });
+
+        lossSumField.setValue(lossService.getSumOfLoss(filteredLoss) + " ₴");
         lossGrid.setColumns("id", "emission.facility", "emission.substance",
                 "emission.year", "lossValue");
         lossGrid.setItems(filteredLoss);
 
-        add(lossLayout, lossGrid);
+        add(lossLayout, lossSumField, lossGrid);
     }
 
     private <ENTITY, T extends JpaRepository<ENTITY, Long>> HorizontalLayout getForm(HorizontalLayout layout, Binder<ENTITY> binder, T repository, Class<ENTITY> beanType) {
@@ -316,7 +315,7 @@ public class View extends VerticalLayout {
                 binder.readBean(beanType.getDeclaredConstructor().newInstance());
                 UI.getCurrent().getPage().reload();
             } catch (Exception e) {
-                e.printStackTrace();
+                System.out.println("Couldn't add new row to the table.");
             }
         });
         return layout;
