@@ -27,13 +27,6 @@ public class Facility {
     @Column(name = "ecological_description")
     private String ecologicalDescription;
 
-    public Facility(String name, String activity, String ownership, String ecologicalDescription) {
-        this.name = name;
-        this.activity = activity;
-        this.ownership = ownership;
-        this.ecologicalDescription = ecologicalDescription;
-    }
-
     @Override
     public String toString() {
         return name;
