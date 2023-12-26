@@ -20,6 +20,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import ua.dolphiedude.ecomon.entity.*;
 import ua.dolphiedude.ecomon.repository.*;
+import ua.dolphiedude.ecomon.service.LossService;
 import ua.dolphiedude.ecomon.service.ResultService;
 import ua.dolphiedude.ecomon.service.RiskService;
 
@@ -28,7 +29,6 @@ import java.util.List;
 
 
 @Route("")
-@Transactional
 public class View extends VerticalLayout {
     private final ResultRepository resultRepository;
 
@@ -52,15 +52,26 @@ public class View extends VerticalLayout {
 
     private final Grid<Risk> riskGrid = new Grid<>(Risk.class);
 
+    private final LossService lossService;
+
+    private final ComboBox<Facility> filterForLossFacility = new ComboBox<>("Facility");
+    private final ComboBox<Substance> filterForLossSubstance = new ComboBox<>("Substance");
+    private final IntegerField filterForLossYear = new IntegerField("Year");
+
+    private List<Loss> filteredLoss;
+
+    private final Grid<Loss> lossGrid = new Grid<>(Loss.class);
 
 
 
     public View(FacilityRepository facilityRepository, SubstanceRepository substanceRepository,
                 EmissionRepository emissionRepository, TaxRepository taxRepository,
                 ResultRepository resultRepository, RiskRepository riskRepository,
-                ResultService resultService, RiskService riskService) {
+                LossRepository lossRepository, ResultService resultService, RiskService riskService,
+                LossService lossService) {
         this.resultRepository = resultRepository;
         this.resultService = resultService;
+        this.lossService = lossService;
 
         this.riskRepository = riskRepository;
 
@@ -238,7 +249,13 @@ public class View extends VerticalLayout {
                 filterForRiskYear, filterRiskButton);
 
         filteredRisk = riskRepository.findAll();
-        filterRiskButton.addClickListener(clicked -> chooseFilterForRisk());
+        filterRiskButton.addClickListener(clicked -> {
+            chooseFilterForEntityOfEmission(filteredRisk, riskRepository,
+                    filterForRiskFacility.getValue(), filterForRiskSubstance.getValue(), filterForRiskYear.getValue());
+            riskGrid.setItems(filteredRisk);
+            riskGrid.getDataProvider().refreshAll();
+        });
+
 
         riskGrid.setColumns("id", "emission.facility", "emission.substance",
                 "emission.year", "nonCarcinogenRisk", "nonCarcinogenMessage",
@@ -246,6 +263,44 @@ public class View extends VerticalLayout {
         riskGrid.setItems(filteredRisk);
 
         add(riskLayout, riskGrid);
+        add(new H3("\n"));
+
+        add(new H3("Loss"));
+        var lossLayout = new HorizontalLayout();
+
+        Button calculateLossesButton = new Button("Calculate Losses");
+        calculateLossesButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+
+        calculateLossesButton.addClickListener(clicked -> {
+            lossService.calculateAndCreateLosses();
+            lossGrid.getDataProvider().refreshAll();
+        });
+        add(calculateLossesButton);
+
+
+        filterForLossFacility.setItems(facilityRepository.findAll());
+        filterForLossFacility.setClearButtonVisible(true);
+
+        filterForLossSubstance.setItems(substanceRepository.findAll());
+        filterForLossSubstance.setClearButtonVisible(true);
+
+        Button filterLossButton = new Button("Filter");
+        filterLossButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        lossLayout.setAlignItems(Alignment.BASELINE);
+        lossLayout.add(filterForLossFacility, filterForLossSubstance,
+                filterForLossYear, filterLossButton);
+
+        filteredLoss = lossRepository.findAll();
+        filterLossButton.addClickListener(clicked -> chooseFilterForEntityOfEmission(filteredLoss, lossRepository,
+                filterForLossFacility.getValue(), filterForLossSubstance.getValue(), filterForLossYear.getValue()));
+        lossGrid.setItems(filteredLoss);
+        lossGrid.getDataProvider().refreshAll();
+
+        lossGrid.setColumns("id", "emission.facility", "emission.substance",
+                "emission.year", "lossValue");
+        lossGrid.setItems(filteredLoss);
+
+        add(lossLayout, lossGrid);
     }
 
     private <ENTITY, T extends JpaRepository<ENTITY, Long>> HorizontalLayout getForm(HorizontalLayout layout, Binder<ENTITY> binder, T repository, Class<ENTITY> beanType) {
@@ -289,12 +344,11 @@ public class View extends VerticalLayout {
         sumField.setValue(resultService.getSumOfResult(filteredResult) + " ₴");
     }
 
-    private void chooseFilterForRisk() {
-        final Facility facilityValue = filterForRiskFacility.getValue();
-        final Substance substanceValue = filterForRiskSubstance.getValue();
-        final Integer yearValue = filterForRiskYear.getValue();
-
-        filteredRisk = riskRepository.findAll((root, query, builder) -> {
+    private <T extends EntityOfEmission, RepositoryT extends EntityOfEmissionRepository<T>> void chooseFilterForEntityOfEmission(
+            List<T> filtered, RepositoryT repository, Facility facilityValue,
+            Substance substanceValue, Integer yearValue) {
+        filtered.clear();
+        filtered.addAll(repository.findAll((root, query, builder) -> {
             List<Predicate> predicates = new ArrayList<>();
 
             Join<Risk, Emission> emissionJoin = root.join("emission");
@@ -312,9 +366,9 @@ public class View extends VerticalLayout {
             }
 
             return builder.and(predicates.toArray(new Predicate[0]));
-        });
-
-        riskGrid.setItems(filteredRisk);
-        riskGrid.getDataProvider().refreshAll();
+        }));
     }
+
+
+
 }

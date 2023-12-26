@@ -11,7 +11,7 @@ import java.util.Objects;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Result {
+public class Result extends EntityOfEmission {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

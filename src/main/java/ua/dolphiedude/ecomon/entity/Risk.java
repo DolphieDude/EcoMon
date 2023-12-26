@@ -8,11 +8,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "risk_to_health")
 @Getter
 @Setter
+@Table(name = "risk_to_health")
 @NoArgsConstructor
-public class Risk {
+public class Risk extends EntityOfEmission {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
