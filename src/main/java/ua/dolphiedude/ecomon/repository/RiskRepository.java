@@ -1,9 +1,9 @@
 package ua.dolphiedude.ecomon.repository;
 
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import ua.dolphiedude.ecomon.entity.*;
+import ua.dolphiedude.ecomon.entity.Emission;
+import ua.dolphiedude.ecomon.entity.Risk;
 
 import java.util.List;
 

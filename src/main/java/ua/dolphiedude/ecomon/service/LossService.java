@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ua.dolphiedude.ecomon.entity.Emission;
 import ua.dolphiedude.ecomon.entity.Loss;
-import ua.dolphiedude.ecomon.entity.Result;
 import ua.dolphiedude.ecomon.repository.EmissionRepository;
 import ua.dolphiedude.ecomon.repository.LossRepository;
 

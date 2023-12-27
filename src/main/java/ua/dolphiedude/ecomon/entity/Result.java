@@ -9,43 +9,29 @@ import java.util.Objects;
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class Result extends EntityOfEmission {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
-
-    @OneToOne
-    @JoinColumn(name = "emission_id")
-    private Emission emission;
 
     @Column(name = "taxes_value")
     private BigDecimal taxesValue;
 
-    public Result(BigDecimal taxesValue) {
-        this.taxesValue = taxesValue;
-    }
-
     public Result(Emission emission, BigDecimal taxesValue) {
-        this.emission = emission;
+        setEmission(emission);
         this.taxesValue = taxesValue;
     }
-
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Result result = (Result) o;
-        return Objects.equals(id, result.id) &&
-                Objects.equals(emission, result.emission) && Objects.equals(taxesValue, result.taxesValue);
+        return Objects.equals(super.getId(), result.getId()) &&
+                Objects.equals(getEmission(), result.getEmission()) && Objects.equals(taxesValue, result.taxesValue);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, emission, taxesValue);
+        return Objects.hash(getId(), getEmission(), taxesValue);
     }
 }

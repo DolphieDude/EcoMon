@@ -17,16 +17,6 @@
     @Table(name = "loss")
     public class Loss extends EntityOfEmission {
 
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        @Column(name = "id", nullable = false)
-        private Long id;
-
-        @NotNull
-        @ManyToOne(fetch = FetchType.EAGER, optional = false)
-        @JoinColumn(name = "emission_id", nullable = false, referencedColumnName = "id")
-        private Emission emission;
-
         @NotNull
         @Column(name = "loss_value", nullable = false, precision = 38, scale = 2)
         private BigDecimal lossValue;

@@ -14,16 +14,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Risk extends EntityOfEmission {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private Long id;
-
-    @NotNull
-    @OneToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "emission_id", nullable = false, referencedColumnName = "id")
-    private Emission emission;
-
     @Size(max = 45)
     @Column(name = "non_carcinogen_message", length = 45)
     private String nonCarcinogenMessage;
